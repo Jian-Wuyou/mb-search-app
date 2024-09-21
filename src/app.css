@@ -1,3 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-color: #162721;
+    font-family: 'Inter', sans-serif;
+}
+
+.login-field {
+    width: 672px;
+    height: 48px;
+}
+
+.connect {
+    width: 99px;
+    height: 48px;
+}
