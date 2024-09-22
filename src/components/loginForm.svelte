@@ -1,5 +1,5 @@
 <script>
-    import FaRegUser from "svelte-icons/fa/FaRegUser.svelte";
+    import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
 
     let selectedHost = "mastodon";
@@ -9,18 +9,22 @@
     }
 
     function Login() {
-    if (selectedHost === "mastodon") {
-      console.log("Logging into Mastodon");
-    } else {
-      console.log("Logging into Bluesky");
+        if (selectedHost === "mastodon") {
+            console.log("Logging into Mastodon");
+        } else {
+            console.log("Logging into Bluesky");
+        }
     }
-  }
 </script>
 
 <div class="flex flex-col items-center justify-center">
     <div class="text-white font-bold text-4xl mb-32">
-        Connect a <span class={selectedHost === 'mastodon' ? 'text-mastodon' : 'text-bluesky'}>
-          {selectedHost === 'mastodon' ? 'Mastodon' : 'Bluesky'}
+        Connect a <span
+            class={selectedHost === "mastodon"
+                ? "text-mastodon"
+                : "text-bluesky"}
+        >
+            {selectedHost === "mastodon" ? "Mastodon" : "Bluesky"}
         </span> Account
     </div>
 
@@ -67,7 +71,7 @@
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
             >
-                <FaRegUser />
+                <FaUserAlt />
             </div>
             <input
                 type="text"
