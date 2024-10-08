@@ -1,6 +1,18 @@
 <script>
-    import { SearchBar, SideBar, TimelinePost } from '$lib/components';
 
+    import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
+    import { access_token, posts, query, mastodon_authorized} from '$lib/stores'
+    import { goto } from '$app/navigation';
+
+    function logout(){
+        mastodon_authorized.set(false);
+        goto('/login');
+    }
+
+    $: {
+        $posts
+        console.log(JSON.stringify($posts));
+    }
     // Dummy posts
     const post1 = {
         host: "mastodon",
@@ -64,11 +76,24 @@
     } 
 </script>
 
-<div class="flex justify-center h-screen" style="overflow: auto;">
+<div class="flex justify-center h-screen overflow-auto" >
     <div class="timeline-container border-x border-slateGreen">
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
             <SearchBar />
         </div>
+        {#if mastodon_authorized}
+            {#each $posts as post}
+                <TimelinePost
+                    host="mastodon"
+                    profilePicture={post['account']['avatar_static']}
+                    username={post['account']['display_name']}
+                    handle={post['account']['username']}
+                    content={post['content']}
+                    commentCount={post['replies_count']}
+                    shareCount={post['reblogs_count']}
+                    starCount={post['favourites_count']}/>
+            {/each}
+        {/if}
         <TimelinePost {...post1}/>
         <TimelinePost {...post2}/>
         <TimelinePost {...post3}/>
@@ -84,9 +109,18 @@
         min-height: 100vh;
         max-width: 758px;
         height: fit-content;
+        border-left: 1px solid #2E524C;
+        border-right: 1px solid #2E524C;
     }
 
+
     .search-container {
+        position: sticky;
+        top: 0;
+        width: 758px;
         height: 120px;
+        padding: 2em;
+        border-bottom: 1px solid #2E524C;
+        background-color: #162721;
     }
 </style>
