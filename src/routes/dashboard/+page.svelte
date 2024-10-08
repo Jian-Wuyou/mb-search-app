@@ -1,7 +1,5 @@
 <script>
-    import SearchBar from '../../components/searchBar.svelte';
-    import SideBar from '../../components/sideBar.svelte';
-    import TimelinePost from "../../components/timelinePost.svelte"
+    import { SearchBar, SideBar, TimelinePost } from '$lib/components';
 
     // Dummy posts
     const post1 = {
