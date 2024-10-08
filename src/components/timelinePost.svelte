@@ -37,7 +37,9 @@
             <h1 class="text-white">·</h1>
             <h1 class="text-mintGreen">{handle}</h1>
         </div>
-        <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg border-b-4 border-{host}">
+        <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg border-b-4" 
+            class:border-mastodon={host == "mastodon"}
+            class:border-bluesky={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">
                 <p class="content text-white">{content}</p>
