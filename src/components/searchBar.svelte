@@ -66,7 +66,7 @@
         width: 100%;
     }
 
-    .search-input {
+    .search-bar input {
         height: 100%;
         width: 100%;
     }

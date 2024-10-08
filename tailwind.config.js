@@ -10,7 +10,8 @@ export default {
         forestGreen: '#233732', // fields 
         mintGreen: '#98CDC4', // accent text
         slateGreen: '#2E524C', // dividers
-        teal: '#30554F', // timeline (posts/search bar)
+        teal: '#30554F', // timeline (search bar)
+        darkTeal: '#233E38', // timeline (posts) 
       },
     },
   },
