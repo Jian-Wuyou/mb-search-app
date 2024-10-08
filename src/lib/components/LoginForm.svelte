@@ -1,8 +1,12 @@
 <script lang="ts">
     import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
+    import { sessionStore } from "$lib/store/session";
+    import { goto } from '$app/navigation';
 
     let selectedHost = "mastodon";
+    let username = "";
+    let password = "";
 
     function switchHost(host) {
         selectedHost = host;
@@ -14,6 +18,16 @@
         } else {
             console.log("Logging into Bluesky");
         }
+
+        sessionStore.add_account({
+            host: selectedHost,
+            credentials: {
+                username: username,
+                password: password
+            },
+        });
+
+        goto('/dashboard');
     }
 </script>
 
@@ -28,7 +42,7 @@
         </span> Account
     </div>
 
-    <form on:submit|preventDefault={Login()}>
+    <form on:submit|preventDefault={Login}>
         <div class="mb-4">
             <div class="text-mintGreen font-bold">Account Host</div>
             <div class="flex items-center mt-2 mb-16">
@@ -74,6 +88,7 @@
                 <FaUserAlt />
             </div>
             <input
+                bind:value={username}
                 type="text"
                 placeholder="Username"
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
@@ -87,6 +102,7 @@
                 <FaKey />
             </div>
             <input
+                bind:value={password}
                 type="password"
                 placeholder="Password"
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
