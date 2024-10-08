@@ -1,7 +1,7 @@
 <script>
     import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
-
+    import { env } from '$env/dynamic/public';
     let selectedHost = "mastodon";
 
     function switchHost(host) {
@@ -10,7 +10,11 @@
 
     function Login() {
         if (selectedHost === "mastodon") {
-            console.log("Logging into Mastodon");
+            let clientID = env.PUBLIC_CLIENT_ID;
+            let redirectURI = env.PUBLIC_REDIRECT_URI;
+            let href = "http://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
+            window.open(href);
+            window.location.href = '/enter-code';
         } else {
             console.log("Logging into Bluesky");
         }
@@ -28,7 +32,7 @@
         </span> Account
     </div>
 
-    <form on:submit|preventDefault={Login()}>
+    <form on:submit={Login}>
         <div class="mb-4">
             <div class="text-mintGreen font-bold">Account Host</div>
             <div class="flex items-center mt-2 mb-16">
