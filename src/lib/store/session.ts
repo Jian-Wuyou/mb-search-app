@@ -1,9 +1,12 @@
 import { get, writable } from 'svelte/store';
-import { type Session, type Account } from '$lib/models';
+import type { Session, Account, MastodonCredentials } from '$lib/models';
 import { browser } from "$app/environment"
 
 const initial: Session = {
-    accounts: []
+    accounts: {
+        mastodon: null,
+        bluesky: null
+    }
 };
 
 export function initStore() {
@@ -11,27 +14,24 @@ export function initStore() {
 
     const { set, subscribe } = store;
     if (browser) {
-        const store_string = localStorage.getItem("session");
+        const store_string = localStorage.getItem("session_string");
         if (store_string != null) set(JSON.parse(store_string));
     }
 
     function persist_local() {
-        const store_string = JSON.stringify(get(store));
-        localStorage.setItem("session", store_string);
+        if (browser) {
+            const store_string = JSON.stringify(get(store));
+            localStorage.setItem("session_string", store_string);
+        }
     }
 
-    function create() {
-        const session = {
-            accounts: []
-        };
-
-        set(session);
-        persist_local();
-    }
-
-    function add_account(account: Account) {
+    function add_mastodon(credentials: MastodonCredentials) {
         const session = get(store);
-        session.accounts.push(account);
+        session.accounts.mastodon = {
+            host: "mastodon",
+            credentials: credentials
+        };
+        // session.accounts.push(account);
         set(session);
         persist_local();
     }
@@ -46,11 +46,10 @@ export function initStore() {
     }
 
     return {
-        create,
         clear,
         subscribe,
         values,
-        add_account
+        add_mastodon
     };
 }
 

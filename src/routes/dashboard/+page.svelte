@@ -1,11 +1,11 @@
 <script>
 
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
-    import { access_token, posts, query, mastodon_authorized} from '$lib/stores'
+    import { posts } from '$lib/stores'
     import { goto } from '$app/navigation';
+    import { sessionStore } from '$lib/store';
 
     function logout(){
-        mastodon_authorized.set(false);
         goto('/login');
     }
 
@@ -81,7 +81,7 @@
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
             <SearchBar />
         </div>
-        {#if mastodon_authorized}
+        {#if $sessionStore.accounts.mastodon}
             {#each $posts as post}
                 <TimelinePost
                     host="mastodon"

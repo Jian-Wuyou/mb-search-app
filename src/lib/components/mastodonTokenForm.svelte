@@ -1,8 +1,8 @@
 <script>
     import { env } from '$env/dynamic/public';
     import { goto } from '$app/navigation';
+    import { sessionStore } from '$lib/store';
 
-    import { access_token, access_token_created_at, access_token_scope, access_token_token_type, mastodon_authorized} from '$lib/stores'
     let token = '';
 
     async function obtainToken(event) {
@@ -17,12 +17,13 @@
             });
             if(response.ok){
                 const authToken = await response.json();
-                console.log(authToken);
-                access_token.set(authToken['access_token']);
-                access_token_created_at.set(authToken['created_at']);
-                access_token_scope.set(authToken['scope']);
-                access_token_token_type.set(authToken['token_type']);
-                mastodon_authorized.set(true);
+                console.log(JSON.stringify(authToken));
+                sessionStore.add_mastodon({
+                    access_token: authToken['access_token'],
+                    token_type: authToken['token_type'],
+                    scope: authToken['scope'],
+                    created_at: authToken['created_at']
+                });
                 goto('/dashboard');
             }else{
                 throw new Error(`HTTP error! status: ${response.status}`);

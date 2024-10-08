@@ -1,15 +1,16 @@
 <script lang="ts">
     import FaSearch from "svelte-icons/fa/FaSearch.svelte";
-    import { access_token, posts } from '$lib/stores';
+    import { posts } from '$lib/stores';
+    import { sessionStore } from '$lib/store';
 
     let value = '';
     async function search(event){
         event.preventDefault();
-        console.log(value, $access_token)
+        console.log(value, $sessionStore.accounts.mastodon)
         const href = `https://mastodon.social/api/v2/search?q=${value}&type=statuses`;
         let response = await fetch(href, {
             headers: {
-                'Authorization': `Bearer ${$access_token}`
+                'Authorization': `Bearer ${$sessionStore.accounts.mastodon.credentials.access_token}`
             }
         });
         if(response.ok){
