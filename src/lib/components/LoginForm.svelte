@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
 

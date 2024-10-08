@@ -1,6 +1,5 @@
 <script>
-    import SearchBar from '../../components/searchBar.svelte';
-    import SideBar from '../../components/sideBar.svelte';
+    import { SearchBar, SideBar, PostCard } from '$lib/components';
 </script>
 
 

@@ -1,5 +1,5 @@
-<script>
-    import LoginForm from '../components/loginForm.svelte';
+<script lang="ts">
+    import { LoginForm } from '$lib/components';
 </script>
 
 <div class="flex items-center justify-center h-screen">
