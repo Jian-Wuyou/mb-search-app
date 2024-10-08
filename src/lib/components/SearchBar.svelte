@@ -1,5 +1,22 @@
-<script>
+<script lang="ts">
     import FaSearch from "svelte-icons/fa/FaSearch.svelte";
+    import { access_token, posts } from '$lib/stores';
+
+    let value = '';
+    async function search(event){
+        event.preventDefault();
+        console.log(value, $access_token)
+        const href = `https://mastodon.social/api/v2/search?q=${value}&type=statuses`;
+        let response = await fetch(href, {
+            headers: {
+                'Authorization': `Bearer ${$access_token}`
+            }
+        });
+        if(response.ok){
+            let post = await response.json();
+            posts.set(post['statuses']);
+        }
+    }
 
     let isExpanded = false;
 
@@ -25,9 +42,17 @@
                 ? 'rounded-t-lg border-b-2 border-opacity-20 border-mintGreen'
                 : 'rounded-lg'}"
             placeholder="Search"
+            on:keydown={(e) => e.key === 'Enter' && search(e)}
+            bind:value={value}
             on:focus={handleFocus}
             on:blur={handleBlur}
         />
+        <button
+        class="search-button absolute right-2 top-1/2 transform -translate-y-1/2 bg-mintGreen text-teal px-3 py-1 rounded-md hover:bg-opacity-80"
+        on:click={search}
+    >
+        Search
+    </button>
 
         {#if isExpanded}
             <div
@@ -73,5 +98,10 @@
 
     .expanded-content {
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-button {
+        font-size: 14px;
+        transition: background-opacity 0.2s;
     }
 </style>

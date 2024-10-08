@@ -1,5 +1,5 @@
 <script>
-    import MastodonTokenForm from '../../components/mastodonTokenForm.svelte'
+    import { MastodonTokenForm } from '$lib/components'
 </script>
 <div>
     <MastodonTokenForm />

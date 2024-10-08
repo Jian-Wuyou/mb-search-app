@@ -42,7 +42,7 @@
             class:border-bluesky={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">
-                <p class="content text-white">{content}</p>
+                <p class="content text-white">{@html content}</p>
             </article>
             <div class="flex flex-row justify-between text-mintGreen">
                 <!-- Post statistics -->
