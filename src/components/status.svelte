@@ -17,10 +17,9 @@
         display: flex;
         flex-direction: column;  /* Ensure vertical stacking of elements */
         padding: 1rem;
-        border: 1px solid #ccc;
         border-radius: 5px;
         margin-bottom: 1rem;
-        background-color: #f9f9f9;
+        background-color: #5945D9;
         width: 100%;
         box-sizing: border-box;
     }
@@ -29,6 +28,6 @@
         margin-bottom: 0.5rem;
     }
     .post-content {
-        color: #333;
+        color: #FBFBFB;
     }
 </style>
