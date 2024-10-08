@@ -3,14 +3,8 @@
 </script>
 
 <div class = "side-bar">
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
-    <h1 style="text-align: center">Sidebar</h1>
+    <h1 class="title-text">SearchApp</h1>
+    <h1 style="color: #98CDC4"><strong>Connected Feeds</strong></h1>
 </div>
 
 <style>
@@ -22,5 +16,12 @@
         width: 300px;
         padding: 1em;
         background-color: #162721;
+    }
+
+    .title-text {
+        color: #98CDC4;
+        font-weight: bold;
+        font-size: 2em;
+        margin-bottom: 0.5em;
     }
 </style>
