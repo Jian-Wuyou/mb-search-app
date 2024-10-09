@@ -7,6 +7,43 @@
     let selectedHost = "mastodon";
     let username = "";
     let password = "";
+    let token = "";
+
+
+    async function getMastodonToken() {
+        const clientID = env.PUBLIC_CLIENT_ID;
+        const redirectURI = env.PUBLIC_REDIRECT_URI;
+        const clientSecret = env.PUBLIC_CLIENT_SECRET;
+        const href = "http://mastodon.social/oauth/token?client_id="+clientID+"&client_secret="+
+            clientSecret+"&scope=read&redirect_uri="+redirectURI+"&grant_type=authorization_code&code="+token;
+        try {
+            const response = await fetch(href, {
+                method: "POST"
+            });
+            if(response.ok){
+                const authToken = await response.json();
+                console.log(JSON.stringify(authToken));
+                sessionStore.add_mastodon({
+                    access_token: authToken['access_token'],
+                    token_type: authToken['token_type'],
+                    scope: authToken['scope'],
+                    created_at: authToken['created_at']
+                });
+                goto('/dashboard');
+            }else{
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Error obtaining token:", error);
+        }
+    }
+
+    function getMastodonCode() {
+        let clientID = env.PUBLIC_CLIENT_ID;
+        let redirectURI = env.PUBLIC_REDIRECT_URI;
+        let href = "http://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
+        window.open(href);
+    }
 
     function switchHost(host) {
         selectedHost = host;
@@ -14,11 +51,7 @@
 
     function Login() {
         if (selectedHost === "mastodon") {
-            let clientID = env.PUBLIC_CLIENT_ID;
-            let redirectURI = env.PUBLIC_REDIRECT_URI;
-            let href = "http://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
-            window.open(href);
-            window.location.href = '/enter-code';
+            getMastodonToken();
         } else {
             console.log("Logging into Bluesky");
         }
@@ -85,6 +118,8 @@
 
         <div class="text-mintGreen font-bold">Sign in</div>
 
+        
+        {#if selectedHost !== "mastodon"}
         <div class="relative my-2">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
@@ -112,8 +147,34 @@
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
             />
         </div>
+        
+        {:else}
 
-        <div class="flex justify-end">
+        <div class="relative my-2 mb-8">
+            <div
+                class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
+            >
+                <FaKey />
+            </div>
+            <input
+                bind:value={token}
+                placeholder="Token Code"
+                class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
+            />
+        </div>
+        {/if}
+
+        <div class="flex justify-end gap-4">
+            {#if selectedHost === "mastodon"}
+                <button
+                    class="text-nowrap connect text-white font-bold px-4 rounded-lg transition duration-300 ease-in-out"
+                    class:bg-mastodon={true}
+                    class:hover:bg-[#4CA2FE]={selectedHost !== "mastodon"}
+                    on:click={getMastodonCode}
+                >
+                    Get Code
+                </button>
+            {/if}
             <button
                 type="submit"
                 class="connect text-white font-bold px-4 rounded-lg transition duration-300 ease-in-out"
