@@ -167,7 +167,7 @@
         <div class="flex justify-end gap-4">
             {#if selectedHost === "mastodon"}
                 <button
-                    class="text-nowrap connect text-white font-bold px-4 rounded-lg transition duration-300 ease-in-out"
+                    class="text-nowrap connect text-white font-bold rounded-lg transition duration-300 ease-in-out"
                     class:bg-mastodon={true}
                     class:hover:bg-[#4CA2FE]={selectedHost !== "mastodon"}
                     on:click={getMastodonCode}
