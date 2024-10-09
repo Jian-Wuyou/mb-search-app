@@ -42,7 +42,7 @@
         let clientID = env.PUBLIC_CLIENT_ID;
         let redirectURI = env.PUBLIC_REDIRECT_URI;
         let href = "http://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
-        window.open(href);
+        window.open(href, "mastodonCode","menubar=1,resizable=1,width=500,height=500");
     }
 
     function switchHost(host) {
