@@ -7,10 +7,13 @@
 
 <div class = "side-bar">
     <h1 class="title-text">SearchApp</h1>
-    <h1 style="color: #98CDC4"><strong>Connected Feeds</strong></h1>
-    <!-- {#each $sessionStore.accounts as account}
-        <h2 class="text-white">{account.host}: {account.credentials?.username}</h2>
-    {/each} -->
+    <h1 style="color: #98CDC4"><strong>Connected Feeds <a href="/">+</a></strong></h1>
+    {#if $sessionStore.accounts.mastodon}
+        <div on:click={sessionStore.remove_mastodon} class="cursor-pointer hover:bg-[#1D342F] text-[#98CDC4] flex flex-row items-center gap-3">
+            <div><i class="fa-brands fa-mastodon text-[#6364FF] text-4xl"></i></div>
+            <div>{$sessionStore.accounts.mastodon.username || "no username"} | @{$sessionStore.accounts.mastodon.handle}</div>
+        </div>
+    {/if}
 </div>
 
 <style>

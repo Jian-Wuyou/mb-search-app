@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store';
-import type { Session, Account, MastodonCredentials } from '$lib/models';
+import { env } from '$env/dynamic/public';
+import type { Session, MastodonCredentials } from '$lib/models';
 import { browser } from "$app/environment"
 
 const initial: Session = {
@@ -25,13 +26,33 @@ export function initStore() {
         }
     }
 
-    function add_mastodon(credentials: MastodonCredentials) {
+    async function add_mastodon(credentials: MastodonCredentials) {
         const session = get(store);
+
+        const href = 'https://mastodon.social/api/v1/accounts/verify_credentials';
         session.accounts.mastodon = {
             host: "mastodon",
             credentials: credentials
         };
-        // session.accounts.push(account);
+
+        let response = await fetch(href, {
+            headers: {
+                'Authorization': `Bearer ${credentials.access_token}`
+            }
+        });
+        if(response.ok){
+            let account = await response.json();
+            session.accounts.mastodon.username = account["display_name"];
+            session.accounts.mastodon.handle = account["username"];
+        }
+        set(session);
+        persist_local();
+    }
+
+    async function remove_mastodon() {
+        const session = get(store);
+        if(!session.accounts.mastodon) return;
+        session.accounts.mastodon = null;
         set(session);
         persist_local();
     }
@@ -49,7 +70,8 @@ export function initStore() {
         clear,
         subscribe,
         values,
-        add_mastodon
+        add_mastodon,
+        remove_mastodon
     };
 }
 

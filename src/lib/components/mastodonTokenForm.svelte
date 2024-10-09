@@ -5,8 +5,7 @@
 
     let token = '';
 
-    async function obtainToken(event) {
-        event.preventDefault();
+    async function obtainToken() {
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
         const clientSecret = env.PUBLIC_CLIENT_SECRET;
@@ -36,7 +35,7 @@
 
 <div class="flex flex-col items-center justify-center">
 
-    <form on:submit={obtainToken}>
+    <form on:submit|preventDefault={obtainToken}>
         <div class="relative my-2">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
