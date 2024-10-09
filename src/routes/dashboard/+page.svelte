@@ -3,7 +3,7 @@
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
     import { posts } from '$lib/stores'
     import { goto } from '$app/navigation';
-    import { sessionStore } from '$lib/store';
+    import { sessionStore } from '$lib/store/session';
 
     function logout(){
         goto('/login');

@@ -1,7 +1,7 @@
 <script>
     import { env } from '$env/dynamic/public';
     import { goto } from '$app/navigation';
-    import { sessionStore } from '$lib/store';
+    import { sessionStore } from '$lib/store/session';
 
     let token = '';
 

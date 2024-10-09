@@ -1,5 +1,5 @@
 <script>
-    import { sessionStore } from "$lib/store";
+    import { sessionStore } from "$lib/store/session";
     $: {
         console.log(JSON.stringify($sessionStore));
     }

@@ -1,7 +1,7 @@
 <script lang="ts">
     import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
-    import { sessionStore } from "$lib/store";
+    import { sessionStore } from "$lib/store/session";
     import { goto } from '$app/navigation';
     import { env } from '$env/dynamic/public';
     let selectedHost = "mastodon";

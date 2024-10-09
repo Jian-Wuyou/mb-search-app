@@ -1,7 +1,7 @@
 <script lang="ts">
     import FaSearch from "svelte-icons/fa/FaSearch.svelte";
     import { posts } from '$lib/stores';
-    import { sessionStore } from '$lib/store';
+    import { sessionStore } from '$lib/store/session';
 
     let value = '';
     async function search(event){
