@@ -1,7 +1,8 @@
 import { get, writable } from 'svelte/store';
 import { env } from '$env/dynamic/public';
-import type { Session, MastodonCredentials } from '$lib/models';
+import type { Session, MastodonCredentials, BlueskyCredentials } from '$lib/models';
 import { browser } from "$app/environment"
+import {AtpAgent} from "@atproto/api";
 
 const initial: Session = {
     accounts: {
@@ -30,20 +31,23 @@ export function initStore() {
         const session = get(store);
 
         const href = 'https://mastodon.social/api/v1/accounts/verify_credentials';
-        session.accounts.mastodon = {
-            host: "mastodon",
-            credentials: credentials
-        };
 
         let response = await fetch(href, {
             headers: {
                 'Authorization': `Bearer ${credentials.access_token}`
             }
         });
+
         if(response.ok){
-            let account = await response.json();
-            session.accounts.mastodon.username = account["display_name"];
-            session.accounts.mastodon.handle = account["username"];
+            let { display_name, username } = await response.json();
+            session.accounts.mastodon = {
+                host: "mastodon",
+                credentials: credentials,
+                handle: username,
+                username: display_name
+            };
+        } else {
+            throw new Error("Could not login to Mastodon");
         }
         set(session);
         persist_local();
@@ -56,7 +60,47 @@ export function initStore() {
         set(session);
         persist_local();
     }
-    
+
+    async function add_bluesky(credentials: BlueskyCredentials) {
+        const session = get(store);
+
+        if(!session.accounts.bluesky || credentials.handle != session.accounts.bluesky.handle) {
+
+            session.accounts.bluesky = {
+                host: "bluesky",
+                handle: credentials.handle,
+                credentials: credentials
+            };
+        }
+
+        if(!session.accounts.bluesky.username) {
+            
+            const agent = new AtpAgent({
+                service: "https://bsky.social"
+            })
+            
+            await agent.resumeSession(credentials);
+            
+            const profile = await agent.getProfile({
+                actor: credentials.handle
+            });
+            
+            if(profile.data.displayName) {
+                session.accounts.bluesky.username = profile.data.displayName;
+            }
+        }
+        set(session);
+        persist_local();
+    }
+
+    async function remove_bluesky() {
+        const session = get(store);
+        if(!session.accounts.bluesky) return;
+        session.accounts.bluesky = null;
+        set(session);
+        persist_local();
+    }
+
     function clear() {
         set(initial);
         persist_local();
@@ -71,7 +115,9 @@ export function initStore() {
         subscribe,
         values,
         add_mastodon,
-        remove_mastodon
+        remove_mastodon,
+        add_bluesky,
+        remove_bluesky
     };
 }
 

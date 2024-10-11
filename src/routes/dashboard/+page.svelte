@@ -16,7 +16,7 @@
     // Dummy posts
     const post1 = {
         host: "mastodon",
-        profilePicture: "account_1.png",
+        profilePicture: "/account_1.png",
         username: "Business Guy",
         handle: "@nine_to_five",
         content: "I love computers and science!",
@@ -27,7 +27,7 @@
 
     const post2 = {
         host: "bluesky",
-        profilePicture: "account_2.png",
+        profilePicture: "/account_2.png",
         username: "Can’t live without Corporate",
         handle: "@suit_up_and_enterprise",
         content: `🚀💻 Excited to share my journey into the world of computer science! I’ve always understood the importance of technology, 
@@ -43,7 +43,7 @@
 
     const post3 = {
         host: "bluesky",
-        profilePicture: "account_3.png",
+        profilePicture: "/account_3.png",
         username: "Lad Boyson",
         handle: "@ladboyson83",
         content: `🌟💻 Hey everyone! Just wanted to share how much I’m loving my computer science class this year! 🖥️✨ We’ve been diving 
@@ -55,7 +55,7 @@
 
     const post4 = {
         host: "mastodon",
-        profilePicture: "account_4.png",
+        profilePicture: "/account_4.png",
         username: "Jennifer is my name",
         handle: "@jennnnnny",
         content: `I can’t wait for dishwashers to be powered by Artificial Intelligence!`,
@@ -66,7 +66,7 @@
 
     const post5 = {
         host: "mastodon",
-        profilePicture: "account_5.png",
+        profilePicture: "/account_5.png",
         username: "Dishes Begone",
         handle: "@hot_single_dishwasher_near_you",
         content: `Beep Boop`,

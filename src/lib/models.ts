@@ -1,3 +1,5 @@
+import { type AtpSessionData } from '@atproto/api'
+
 export type Session = {
     accounts: {
         mastodon: Account<MastodonCredentials> | null,
@@ -8,7 +10,7 @@ export type Session = {
 export type Account<Credentials> = {
     host: string,
     username?: string | null,
-    handle?: string | null,
+    handle: string | null,
     credentials: Credentials
 };
 
@@ -19,4 +21,4 @@ export type MastodonCredentials = {
     created_at: number
 };
 
-export type BlueskyCredentials = any;
+export type BlueskyCredentials = AtpSessionData;
