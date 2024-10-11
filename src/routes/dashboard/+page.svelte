@@ -7,8 +7,12 @@
 
     $: {
         $mastodon_posts
-        // console.log(JSON.stringify($posts));
+        $bluesky_posts
     }
+
+    let enable_bluesky = true;
+    let enable_mastodon = true;
+
     // Dummy posts
     const post1 = {
         host: "mastodon",
@@ -75,9 +79,9 @@
 <div class="flex justify-center h-screen overflow-auto" >
     <div class="timeline-container border-x border-slateGreen">
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
-            <SearchBar />
+            <SearchBar/>
         </div>
-        {#if $sessionStore.accounts.bluesky}
+        {#if $sessionStore.accounts.bluesky && enable_bluesky}
             {#each $bluesky_posts as post}
                 <TimelinePost
                     host="bluesky"
@@ -92,7 +96,7 @@
                 <!-- Created at: post['author']['createdAt'] = "2024-04-22T05:53:26.673Z" -->
             {/each}
         {/if}
-        {#if $sessionStore.accounts.mastodon}
+        {#if $sessionStore.accounts.mastodon && enable_mastodon}
             {#each $mastodon_posts as post}
                 <TimelinePost
                     host="mastodon"
@@ -112,7 +116,7 @@
         <TimelinePost {...post5}/>
     </div>
 
-    <SideBar />
+    <SideBar bind:enable_bluesky={enable_bluesky} bind:enable_mastodon={enable_mastodon}/>
 </div>
 
 <style>
