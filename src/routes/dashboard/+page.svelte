@@ -1,17 +1,13 @@
 <script>
 
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
-    import { posts } from '$lib/stores'
+    import { mastodon_posts, bluesky_posts } from '$lib/stores'
     import { goto } from '$app/navigation';
     import { sessionStore } from '$lib/store/session';
 
-    function logout(){
-        goto('/login');
-    }
-
     $: {
-        $posts
-        console.log(JSON.stringify($posts));
+        $mastodon_posts
+        // console.log(JSON.stringify($posts));
     }
     // Dummy posts
     const post1 = {
@@ -81,8 +77,23 @@
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
             <SearchBar />
         </div>
+        {#if $sessionStore.accounts.bluesky}
+            {#each $bluesky_posts as post}
+                <TimelinePost
+                    host="bluesky"
+                    profilePicture={post['author']['avatar']}
+                    username={post['author']['displayName']}
+                    handle={post['author']['handle']}
+                    content={post['record']['text']}
+                    commentCount={post['replyCount']}
+                    shareCount={post['repostCount']}
+                    starCount={post['likeCount']}
+                />
+                <!-- Created at: post['author']['createdAt'] = "2024-04-22T05:53:26.673Z" -->
+            {/each}
+        {/if}
         {#if $sessionStore.accounts.mastodon}
-            {#each $posts as post}
+            {#each $mastodon_posts as post}
                 <TimelinePost
                     host="mastodon"
                     profilePicture={post['account']['avatar_static']}

@@ -5,6 +5,7 @@
     import { goto } from '$app/navigation';
     import { env } from '$env/dynamic/public';
     import { CredentialSession, AtpAgent, type AtpSessionData} from '@atproto/api';
+    import { getAtpAgent } from '$lib/bsky';
     
     let selectedHost = "mastodon";
     let username = "";
@@ -47,18 +48,7 @@
     }
 
     async function getBlueskyToken() {
-        const agent = new AtpAgent({
-            service: 'https://bsky.social',
-            persistSession: (evt, session?: AtpSessionData | undefined) => {
-                console.log("evt");
-                console.log(JSON.stringify(evt));
-                console.log("session");
-                console.log(JSON.stringify(session));
-                if(session) {
-                    sessionStore.add_bluesky(session);
-                }
-            }
-        })
+        const agent = getAtpAgent(sessionStore);
 
         const resp = await agent.login({
             identifier: username,
