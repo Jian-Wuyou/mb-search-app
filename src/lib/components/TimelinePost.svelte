@@ -37,9 +37,11 @@
             <h1 class="text-white">·</h1>
             <h1 class="text-mintGreen">{handle}</h1>
         </div>
-        <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg border-b-4" 
-            class:border-mastodon={host == "mastodon"}
-            class:border-bluesky={host == "bluesky"}>
+        <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg" 
+            class:bg-mastodon={host == "mastodon"}
+            class:bg-opacity-45={host == "mastodon"}
+            class:bg-[#0085FF]={host == "bluesky"}
+            class:bg-opacity-40={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">
                 <p class="content text-white">{@html content}</p>
