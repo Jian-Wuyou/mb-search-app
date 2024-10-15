@@ -1,21 +1,57 @@
 <script lang="ts">
     import FaSearch from "svelte-icons/fa/FaSearch.svelte";
-    import { posts } from '$lib/stores';
+    import { mastodon_posts, bluesky_posts } from '$lib/stores';
     import { sessionStore } from '$lib/store/session';
+    import { getAtpAgent } from '$lib/bsky';
+ 
+    const agent = getAtpAgent(sessionStore);
+    if($sessionStore.accounts.bluesky) {
+        agent.resumeSession($sessionStore.accounts.bluesky.credentials);
+    }
 
-    let value = '';
+    let searchQuery = '';
     async function search(event){
         event.preventDefault();
-        console.log(value, $sessionStore.accounts.mastodon)
-        const href = `https://mastodon.social/api/v2/search?q=${value}&type=statuses`;
-        let response = await fetch(href, {
-            headers: {
-                'Authorization': `Bearer ${$sessionStore.accounts.mastodon.credentials.access_token}`
+        if($sessionStore.accounts.mastodon) {
+            const searchParams = new URLSearchParams({
+                q: searchQuery,
+                limit: '20',
+                type: 'statuses'
+            });
+
+            const href = `https://mastodon.social/api/v2/search?${searchParams.toString()}`;
+            const response = await fetch(href, {
+                headers: {
+                    'Authorization': `Bearer ${$sessionStore.accounts.mastodon.credentials.access_token}`
+                }
+            });
+
+            if(response.ok){
+                let post = await response.json();
+                mastodon_posts.set(post['statuses']);
             }
-        });
-        if(response.ok){
-            let post = await response.json();
-            posts.set(post['statuses']);
+        }
+
+        if($sessionStore.accounts.bluesky) {
+            const searchParams = new URLSearchParams({
+                q: searchQuery,
+                limit: '20'
+            });
+            
+            const pdsUrl = agent.pdsUrl;
+            const href = `${pdsUrl}xrpc/app.bsky.feed.searchPosts?${searchParams.toString()}`
+            const response = await fetch(
+                href, {
+                    headers: {
+                        Authorization: `Bearer ${$sessionStore.accounts.bluesky.credentials.accessJwt}`
+                    }
+                }
+            );
+
+            if(response.ok) {
+                let post = await response.json();
+                bluesky_posts.set(post['posts']);
+            }
         }
     }
 
@@ -44,7 +80,7 @@
                 : 'rounded-lg'}"
             placeholder="Search"
             on:keydown={(e) => e.key === 'Enter' && search(e)}
-            bind:value={value}
+            bind:value={searchQuery}
             on:focus={handleFocus}
             on:blur={handleBlur}
         />

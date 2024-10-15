@@ -1,22 +1,22 @@
 <script>
 
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
-    import { posts } from '$lib/stores'
+    import { mastodon_posts, bluesky_posts } from '$lib/stores'
     import { goto } from '$app/navigation';
     import { sessionStore } from '$lib/store/session';
 
-    function logout(){
-        goto('/login');
+    $: {
+        $mastodon_posts
+        $bluesky_posts
     }
 
-    $: {
-        $posts
-        console.log(JSON.stringify($posts));
-    }
+    let enable_bluesky = true;
+    let enable_mastodon = true;
+
     // Dummy posts
     const post1 = {
         host: "mastodon",
-        profilePicture: "account_1.png",
+        profilePicture: "/account_1.png",
         username: "Business Guy",
         handle: "@nine_to_five",
         content: "I love computers and science!",
@@ -27,7 +27,7 @@
 
     const post2 = {
         host: "bluesky",
-        profilePicture: "account_2.png",
+        profilePicture: "/account_2.png",
         username: "Can’t live without Corporate",
         handle: "@suit_up_and_enterprise",
         content: `🚀💻 Excited to share my journey into the world of computer science! I’ve always understood the importance of technology, 
@@ -43,7 +43,7 @@
 
     const post3 = {
         host: "bluesky",
-        profilePicture: "account_3.png",
+        profilePicture: "/account_3.png",
         username: "Lad Boyson",
         handle: "@ladboyson83",
         content: `🌟💻 Hey everyone! Just wanted to share how much I’m loving my computer science class this year! 🖥️✨ We’ve been diving 
@@ -55,7 +55,7 @@
 
     const post4 = {
         host: "mastodon",
-        profilePicture: "account_4.png",
+        profilePicture: "/account_4.png",
         username: "Jennifer is my name",
         handle: "@jennnnnny",
         content: `I can’t wait for dishwashers to be powered by Artificial Intelligence!`,
@@ -66,7 +66,7 @@
 
     const post5 = {
         host: "mastodon",
-        profilePicture: "account_5.png",
+        profilePicture: "/account_5.png",
         username: "Dishes Begone",
         handle: "@hot_single_dishwasher_near_you",
         content: `Beep Boop`,
@@ -79,10 +79,25 @@
 <div class="flex justify-center h-screen overflow-auto" >
     <div class="timeline-container border-x border-slateGreen">
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
-            <SearchBar />
+            <SearchBar/>
         </div>
-        {#if $sessionStore.accounts.mastodon}
-            {#each $posts as post}
+        {#if $sessionStore.accounts.bluesky && enable_bluesky}
+            {#each $bluesky_posts as post}
+                <TimelinePost
+                    host="bluesky"
+                    profilePicture={post['author']['avatar']}
+                    username={post['author']['displayName']}
+                    handle={post['author']['handle']}
+                    content={post['record']['text']}
+                    commentCount={post['replyCount']}
+                    shareCount={post['repostCount']}
+                    starCount={post['likeCount']}
+                />
+                <!-- Created at: post['author']['createdAt'] = "2024-04-22T05:53:26.673Z" -->
+            {/each}
+        {/if}
+        {#if $sessionStore.accounts.mastodon && enable_mastodon}
+            {#each $mastodon_posts as post}
                 <TimelinePost
                     host="mastodon"
                     profilePicture={post['account']['avatar_static']}
@@ -101,7 +116,7 @@
         <TimelinePost {...post5}/>
     </div>
 
-    <SideBar />
+    <SideBar bind:enable_bluesky={enable_bluesky} bind:enable_mastodon={enable_mastodon}/>
 </div>
 
 <style>

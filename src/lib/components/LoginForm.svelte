@@ -4,11 +4,13 @@
     import { sessionStore } from "$lib/store/session";
     import { goto } from '$app/navigation';
     import { env } from '$env/dynamic/public';
+    import { CredentialSession, AtpAgent, type AtpSessionData} from '@atproto/api';
+    import { getAtpAgent } from '$lib/bsky';
+    
     let selectedHost = "mastodon";
     let username = "";
     let password = "";
     let token = "";
-
 
     async function getMastodonToken() {
         const clientID = env.PUBLIC_CLIENT_ID;
@@ -45,6 +47,23 @@
         window.open(href, "mastodonCode","menubar=1,resizable=1,width=500,height=500");
     }
 
+    async function getBlueskyToken() {
+        const agent = getAtpAgent(sessionStore);
+
+        const resp = await agent.login({
+            identifier: username,
+            password: password
+        })
+        
+        if(!resp.success) {
+            return;
+        }
+
+        console.log(JSON.stringify(resp));
+
+        goto("/dashboard");
+    }
+
     function switchHost(host) {
         selectedHost = host;
     }
@@ -53,18 +72,9 @@
         if (selectedHost === "mastodon") {
             getMastodonToken();
         } else {
-            console.log("Logging into Bluesky");
+            getBlueskyToken();
         }
-
-        sessionStore.add_account({
-            host: selectedHost,
-            credentials: {
-                username: username,
-                password: password
-            },
-        });
-
-        goto('/dashboard');
+        // If login is unsuccessful
     }
 </script>
 
@@ -119,6 +129,7 @@
         <div class="text-mintGreen font-bold">Sign in</div>
 
         
+        
         {#if selectedHost !== "mastodon"}
         <div class="relative my-2">
             <div
@@ -129,11 +140,10 @@
             <input
                 bind:value={username}
                 type="text"
-                placeholder="Username"
+                placeholder="example.bsky.social"
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
             />
         </div>
-
         <div class="relative mb-8">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
@@ -147,9 +157,7 @@
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
             />
         </div>
-        
         {:else}
-
         <div class="relative my-2 mb-8">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
