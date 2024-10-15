@@ -16,7 +16,7 @@
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
         const clientSecret = env.PUBLIC_CLIENT_SECRET;
-        const href = "http://mastodon.social/oauth/token?client_id="+clientID+"&client_secret="+
+        const href = "https://mastodon.social/oauth/token?client_id="+clientID+"&client_secret="+
             clientSecret+"&scope=read&redirect_uri="+redirectURI+"&grant_type=authorization_code&code="+token;
         try {
             const response = await fetch(href, {
@@ -43,7 +43,7 @@
     function getMastodonCode() {
         let clientID = env.PUBLIC_CLIENT_ID;
         let redirectURI = env.PUBLIC_REDIRECT_URI;
-        let href = "http://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
+        let href = "https://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
         window.open(href, "mastodonCode","menubar=1,resizable=1,width=500,height=500");
     }
 
