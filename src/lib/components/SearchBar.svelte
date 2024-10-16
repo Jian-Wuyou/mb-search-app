@@ -12,6 +12,12 @@
     let searchQuery = '';
     async function search(event){
         event.preventDefault();
+
+        // Limit search query based on post character limit of 300
+        if (searchQuery.length > 300) {
+            searchQuery = searchQuery.slice(0, 300);
+        }
+
         if($sessionStore.accounts.mastodon) {
             const searchParams = new URLSearchParams({
                 q: searchQuery,

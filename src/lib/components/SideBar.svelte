@@ -1,7 +1,19 @@
 <script>
     import { sessionStore } from "$lib/store/session";
+    import { mastodon_posts, bluesky_posts } from "$lib/stores";
     export let enable_mastodon = true;
     export let enable_bluesky = true;
+
+    async function logout_mastodon() {
+        await sessionStore.remove_mastodon();
+        $mastodon_posts.set([]);
+    }
+
+    async function logout_bluesky() {
+        await sessionStore.remove_bluesky();
+        $bluesky_posts.set([]);
+    }
+
 </script>
 
 <div class="side-bar">
@@ -33,7 +45,7 @@
             <button
                 type="button"
                 class="ml-auto"
-                on:click={sessionStore.remove_mastodon}>X</button
+                on:click={logout_mastodon}>X</button
             >
         </button>
     {/if}
@@ -61,7 +73,7 @@
             <button
                 type="button"
                 class="ml-auto"
-                on:click={sessionStore.remove_bluesky}>X</button
+                on:click={logout_bluesky}>X</button
             >
         </button>
     {/if}
