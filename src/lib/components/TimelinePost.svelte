@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     export let host = "mastodon";
     export let profilePicture = "account_1.png";
     export let username = "username";
@@ -8,6 +8,7 @@
     export let commentCount = 813333433;
     export let shareCount = 5432;
     export let starCount = 28258521;
+    export let createdAt: Date | undefined = undefined;
 
     // Turns an integer into a readable string
     function prettify(count)

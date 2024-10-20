@@ -1,13 +1,46 @@
-<script>
-
+<script lang="ts">
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
     import { mastodon_posts, bluesky_posts } from '$lib/stores'
     import { goto } from '$app/navigation';
     import { sessionStore } from '$lib/store/session';
 
+    let all_posts: any[] = [];
     $: {
-        $mastodon_posts
-        $bluesky_posts
+        all_posts = [];
+
+        if($sessionStore.accounts.bluesky) {
+            for(let post of $bluesky_posts) {
+                all_posts.push({
+                    host : "bluesky",
+                    profilePicture : post['author']['avatar'],
+                    username : post['author']['displayName'],
+                    handle : post['author']['handle'],
+                    content : post['record']['text'],
+                    commentCount : post['replyCount'],
+                    shareCount : post['repostCount'],
+                    starCount : post['likeCount'],
+                    createdAt : new Date(post['record']['createdAt'])
+                })
+            }
+        }
+
+        if($sessionStore.accounts.mastodon) {
+            for(let post of $mastodon_posts) {
+                all_posts.push({
+                    host : "mastodon",
+                    profilePicture : post['account']['avatar_static'],
+                    username : post['account']['display_name'],
+                    handle : post['account']['username'],
+                    content : post['content'],
+                    commentCount : post['replies_count'],
+                    shareCount : post['reblogs_count'],
+                    starCount : post['favourites_count'],
+                    createdAt : new Date(post['created_at'])
+                })
+            }
+        }
+
+        all_posts.sort((a,b)=> b.createdAt - a.createdAt);
     }
 
     let enable_bluesky = true;
@@ -81,34 +114,12 @@
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
             <SearchBar/>
         </div>
-        {#if $sessionStore.accounts.bluesky && enable_bluesky}
-            {#each $bluesky_posts as post}
-                <TimelinePost
-                    host="bluesky"
-                    profilePicture={post['author']['avatar']}
-                    username={post['author']['displayName']}
-                    handle={post['author']['handle']}
-                    content={post['record']['text']}
-                    commentCount={post['replyCount']}
-                    shareCount={post['repostCount']}
-                    starCount={post['likeCount']}
-                />
-                <!-- Created at: post['author']['createdAt'] = "2024-04-22T05:53:26.673Z" -->
-            {/each}
-        {/if}
-        {#if $sessionStore.accounts.mastodon && enable_mastodon}
-            {#each $mastodon_posts as post}
-                <TimelinePost
-                    host="mastodon"
-                    profilePicture={post['account']['avatar_static']}
-                    username={post['account']['display_name']}
-                    handle={post['account']['username']}
-                    content={post['content']}
-                    commentCount={post['replies_count']}
-                    shareCount={post['reblogs_count']}
-                    starCount={post['favourites_count']}/>
-            {/each}
-        {/if}
+        {#each all_posts as post}
+            {#if post.host == "bluesky" && enable_bluesky || post.host == "mastodon" && enable_mastodon}
+                <TimelinePost {...post}/>
+            {/if}
+        {/each}
+
         <!-- <TimelinePost {...post1}/>
         <TimelinePost {...post2}/>
         <TimelinePost {...post3}/>
