@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
+
     export let host = "mastodon";
     export let profilePicture = "account_1.png";
     export let username = "username";
@@ -10,6 +12,7 @@
     export let starCount = 28258521;
     export let createdAt: Date | undefined = undefined;
     export let searchTerm = "";
+    export let postUrl = "";
 
     const dateFormatOptions = {
         year: "numeric",
@@ -40,6 +43,12 @@
         const regex = new RegExp(`(${searchTerm})`, 'gi');  
         return content.replace(regex, '<span class="font-bold">$1</span>');
     }
+
+    // Handle post click to redirect on specific post URL
+    function handleClick(event: MouseEvent) {
+        event.preventDefault();
+        window.location.href = postUrl;
+    }
 </script>
 
 <div class="post flex flex-row gap-2 p-4">
@@ -68,9 +77,11 @@
             class:bg-bluesky={host == "bluesky"}
             class:bg-opacity-25={host == "bluesky"}>
             <!-- Post content -->
-            <article class="text-wrap">
-                <p class="content text-white">{@html highlightContent(content, searchTerm)}</p>
-            </article>
+            <a href={postUrl} on:click|preventDefault={handleClick} class="post flex flex-row gap-2 p-4">
+                <article class="text-wrap">
+                    <p class="content text-white">{@html highlightContent(content, searchTerm)}</p>
+                </article>
+              </a>
             <div class="flex flex-row justify-between text-mintGreen">
                 <!-- Post statistics -->
                 <span class="flex flex-row items-center gap-1">

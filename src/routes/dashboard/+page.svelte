@@ -21,6 +21,7 @@
                     commentCount : post['replyCount'],
                     shareCount : post['repostCount'],
                     starCount : post['likeCount'],
+                    postUrl: post['url'],
                     createdAt : new Date(post['record']['createdAt'])
                 })
             }
@@ -37,6 +38,7 @@
                     commentCount : post['replies_count'],
                     shareCount : post['reblogs_count'],
                     starCount : post['favourites_count'],
+                    postUrl: post['url'],
                     createdAt : new Date(post['created_at'])
                 })
             }
