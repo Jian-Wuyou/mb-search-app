@@ -8,8 +8,14 @@
     export let commentCount = 813333433;
     export let shareCount = 5432;
     export let starCount = 28258521;
-    export const createdAt: Date | undefined = undefined;
+    export let createdAt: Date | undefined = undefined;
     export let searchTerm = "";
+
+    const dateFormatOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    }
 
     // Turns an integer into a readable string
     function prettify(count)
@@ -39,16 +45,27 @@
 <div class="post flex flex-row gap-2 p-4">
     <img class="profile-picture rounded-lg" src={profilePicture} alt="profile picture"/>
     <div class="flex flex-col grow gap-1">
-        <div class="flex flex-row gap-2 mx-2">
-            <!-- Account details -->
-            <h1 class="font-bold text-white">{username}</h1>
-            <h1 class="text-white">·</h1>
-            <h1 class="text-mintGreen">{handle}</h1>
+        <div class="flex flex-row justify-between">
+            <div class="flex flex-row gap-2 mx-2">
+                <!-- Account details -->
+                <h1 class="font-bold text-white">{username}</h1>
+                <h1 class="text-white">·</h1>
+                <h1 class="text-mintGreen">{handle}</h1>
+            </div>
+            <div>
+                {#if createdAt !== undefined}
+                <!-- @ts-ignore --> 
+                <h1 class="text-mintGreen">{
+                    new Intl.DateTimeFormat('en-US', 
+                    // @ts-ignore
+                    dateFormatOptions).format(createdAt)}</h1>
+                {/if}
+            </div>
         </div>
         <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg" 
             class:bg-mastodon={host == "mastodon"}
             class:bg-opacity-30={host == "mastodon"}
-            class:bg-Bluesky={host == "bluesky"}
+            class:bg-[#0085FF]={host == "bluesky"}
             class:bg-opacity-25={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">

@@ -12,7 +12,6 @@ export default {
         slateGreen: '#2E524C', // dividers
         teal: '#30554F', // timeline (search bar)
         darkTeal: '#233E38', // timeline (posts) 
-        Bluesky: '#0085FF', // blue
       },
     },
   },
