@@ -62,10 +62,10 @@
                 {/if}
             </div>
         </div>
-        <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg" 
+        <div class="flex flex-col p-4 gap-4 rounded-tr-lg rounded-b-lg" 
             class:bg-mastodon={host == "mastodon"}
             class:bg-opacity-30={host == "mastodon"}
-            class:bg-[#0085FF]={host == "bluesky"}
+            class:bg-bluesky={host == "bluesky"}
             class:bg-opacity-25={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">
