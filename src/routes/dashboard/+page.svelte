@@ -5,6 +5,8 @@
     import { sessionStore } from '$lib/store/session';
 
     let all_posts: any[] = [];
+    let searchQuery = '';
+
     $: {
         all_posts = [];
 
@@ -112,11 +114,11 @@
 <div class="flex justify-center h-screen overflow-auto" >
     <div class="timeline-container border-x border-slateGreen">
         <div class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen">
-            <SearchBar/>
+            <SearchBar bind:searchQuery={searchQuery}/>
         </div>
         {#each all_posts as post}
             {#if post.host == "bluesky" && enable_bluesky || post.host == "mastodon" && enable_mastodon}
-                <TimelinePost {...post}/>
+                <TimelinePost {...post} searchTerm={searchQuery}/>
             {/if}
         {/each}
 

@@ -8,7 +8,8 @@
     export let commentCount = 813333433;
     export let shareCount = 5432;
     export let starCount = 28258521;
-    export let createdAt: Date | undefined = undefined;
+    export const createdAt: Date | undefined = undefined;
+    export let searchTerm = "";
 
     // Turns an integer into a readable string
     function prettify(count)
@@ -27,6 +28,12 @@
         const digitAcronyms = ["", "K", "M", "B", "T"];
         return prettyfied + digitAcronyms[thousandsPower - 1];
     }    
+
+    function highlightContent(content, searchTerm) {
+        if (!searchTerm) return content;  
+        const regex = new RegExp(`(${searchTerm})`, 'gi');  
+        return content.replace(regex, '<span class="font-bold">$1</span>');
+    }
 </script>
 
 <div class="post flex flex-row gap-2 p-4">
@@ -40,12 +47,12 @@
         </div>
         <div class="flex flex-col p-4 gap-4 bg-darkTeal rounded-tr-lg rounded-b-lg" 
             class:bg-mastodon={host == "mastodon"}
-            class:bg-opacity-45={host == "mastodon"}
-            class:bg-[#0085FF]={host == "bluesky"}
-            class:bg-opacity-40={host == "bluesky"}>
+            class:bg-opacity-30={host == "mastodon"}
+            class:bg-Bluesky={host == "bluesky"}
+            class:bg-opacity-25={host == "bluesky"}>
             <!-- Post content -->
             <article class="text-wrap">
-                <p class="content text-white">{@html content}</p>
+                <p class="content text-white">{@html highlightContent(content, searchTerm)}</p>
             </article>
             <div class="flex flex-row justify-between text-mintGreen">
                 <!-- Post statistics -->

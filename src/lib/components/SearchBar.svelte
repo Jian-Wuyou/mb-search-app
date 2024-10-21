@@ -3,13 +3,13 @@
     import { mastodon_posts, bluesky_posts } from '$lib/stores';
     import { sessionStore } from '$lib/store/session';
     import { getAtpAgent } from '$lib/bsky';
- 
+    
     const agent = getAtpAgent(sessionStore);
     if($sessionStore.accounts.bluesky) {
         agent.resumeSession($sessionStore.accounts.bluesky.credentials);
     }
 
-    let searchQuery = '';
+    export let searchQuery = '';
     async function search(event){
         event.preventDefault();
 
