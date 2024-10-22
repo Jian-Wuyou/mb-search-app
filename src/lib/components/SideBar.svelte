@@ -6,12 +6,12 @@
 
     async function logout_mastodon() {
         await sessionStore.remove_mastodon();
-        $mastodon_posts.set([]);
+        mastodon_posts.set([]);
     }
 
     async function logout_bluesky() {
         await sessionStore.remove_bluesky();
-        $bluesky_posts.set([]);
+        bluesky_posts.set([]);
     }
 
 </script>
