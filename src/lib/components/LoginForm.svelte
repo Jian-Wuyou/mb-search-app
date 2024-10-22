@@ -4,7 +4,6 @@
     import { sessionStore } from "$lib/store/session";
     import { goto } from '$app/navigation';
     import { env } from '$env/dynamic/public';
-    import { CredentialSession, AtpAgent, type AtpSessionData} from '@atproto/api';
     import { getAtpAgent } from '$lib/bsky';
     
     let selectedHost = "mastodon";
@@ -12,7 +11,15 @@
     let password = "";
     let token = "";
 
+    // If undefined or empty string, there's no error
+    let errorMessage: string | undefined;
+
     async function getMastodonToken() {
+        if(!token) {
+            errorMessage = "Enter a token";
+            return;
+        }
+
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
         const clientSecret = env.PUBLIC_CLIENT_SECRET;
@@ -32,10 +39,11 @@
                     created_at: authToken['created_at']
                 });
                 goto('/dashboard');
-            }else{
+            } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {
+            errorMessage = "Wrong token, please try again";
             console.error("Error obtaining token:", error);
         }
     }
@@ -48,14 +56,30 @@
     }
 
     async function getBlueskyToken() {
+        if(!username) {
+            errorMessage = "Enter a handle";
+            return;
+        }
+        if(!password) {
+            errorMessage = "Enter a password";
+            return;
+        }
+
         const agent = getAtpAgent(sessionStore);
 
-        const resp = await agent.login({
-            identifier: username,
-            password: password
-        })
+        let resp;
+        try {
+            resp = await agent.login({
+                identifier: username,
+                password: password
+            })
+        } catch(e) {
+            errorMessage = "Wrong username or password, please try again";
+            return;
+        }
         
         if(!resp.success) {
+            console.error("Error obtaining token");
             return;
         }
 
@@ -64,7 +88,11 @@
         goto("/dashboard");
     }
 
-    function switchHost(host) {
+    function switchHost(host: string) {
+        // Clear error message when switching hosts
+        if(selectedHost != host) {
+            errorMessage = undefined;
+        }
         selectedHost = host;
     }
 
@@ -74,7 +102,6 @@
         } else {
             getBlueskyToken();
         }
-        // If login is unsuccessful
     }
 </script>
 
@@ -144,7 +171,7 @@
                 class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
             />
         </div>
-        <div class="relative mb-8">
+        <div class="relative">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
             >
@@ -158,7 +185,7 @@
             />
         </div>
         {:else}
-        <div class="relative my-2 mb-8">
+        <div class="relative my-2">
             <div
                 class="icon absolute left-3 top-1/2 transform -translate-y-1/2"
             >
@@ -171,8 +198,18 @@
             />
         </div>
         {/if}
+        {#if errorMessage}
+            <div class="flex flex-row gap-2 items-center text-red-600 mt-2">
+                <div>
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <span>{errorMessage}</span>
+                </div>
+            </div>
+        {/if}
 
-        <div class="flex justify-end gap-4">
+        <div class="flex justify-end gap-4 mt-8">
             {#if selectedHost === "mastodon"}
                 <button
                     class="text-nowrap connect text-white font-bold rounded-lg transition duration-300 ease-in-out"
