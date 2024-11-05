@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import FaSearch from "svelte-icons/fa/FaSearch.svelte";
     import { mastodon_posts, bluesky_posts } from '$lib/stores';
     import { sessionStore } from '$lib/store/session';
@@ -10,15 +11,54 @@
     }
 
     export let searchQuery = '';
-    async function search(event?: Event){
+    let searchHistory: Array<{ query: string; timestamp: string }> = [];
+    const MAX_HISTORY_ITEMS = 5;
+
+    onMount(() => {
+        const savedHistory = localStorage.getItem('searchHistory');
+        if (savedHistory) {
+            searchHistory = JSON.parse(savedHistory);
+        }
+    });
+
+    function addToHistory(query: string) {
+        
+        if (!query.trim()) return;
+        
+        searchHistory = searchHistory.filter(item => item.query !== query);
+        
+        searchHistory = [{
+            query,
+            timestamp: new Date().toISOString()
+        }, ...searchHistory];
+        
+        if (searchHistory.length > MAX_HISTORY_ITEMS) {
+            searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS);
+        }
+        
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }
+
+    function removeFromHistory(query: string) {
+        searchHistory = searchHistory.filter(item => item.query !== query);
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }
+
+    function clearHistory() {
+        searchHistory = [];
+        localStorage.setItem('searchHistory', JSON.stringify([]));
+    }
+
+    async function search(event?: Event) {
         if (event) {
             event.preventDefault();
         }
 
-        // Limit search query based on post character limit of 300
         if (searchQuery.length > 300) {
             searchQuery = searchQuery.slice(0, 300);
         }
+
+        addToHistory(searchQuery);
 
         if($sessionStore.accounts.mastodon) {
             const searchParams = new URLSearchParams({
@@ -36,7 +76,6 @@
 
             if(response.ok){
                 let post = await response.json();
-                // console.log(post['statuses']);
                 mastodon_posts.set(post['statuses']);
             }
         }
@@ -59,7 +98,6 @@
 
             if(response.ok) {
                 let post = await response.json();
-                // console.log(post['posts']);
                 bluesky_posts.set(post['posts']);
             }
         }
@@ -75,6 +113,11 @@
         setTimeout(() => {
             isExpanded = false;
         }, 200);
+    }
+
+    function useHistoryItem(query: string) {
+        searchQuery = query;
+        search();
     }
 </script>
 
@@ -95,29 +138,62 @@
             on:blur={handleBlur}
         />
         <button
-        class="search-button absolute right-2 top-1/2 transform -translate-y-1/2 bg-mintGreen text-teal px-3 py-1 rounded-md hover:bg-opacity-80"
-        on:click={search}
-    >
-        Search
-    </button>
+            class="search-button absolute right-2 top-1/2 transform -translate-y-1/2 bg-mintGreen text-teal px-3 py-1 rounded-md hover:bg-opacity-80"
+            on:click={search}
+        >
+            Search
+        </button>
 
         {#if isExpanded}
             <div
                 class="expanded-content absolute top-full left-0 w-full bg-teal rounded-b-lg p-6 py-2 z-10"
             >
-                <!-- need to automate/logic this part for history purposes -->
                 <div class="mb-6">
-                    <p class="font-semibold text-mintGreen mb-2">HISTORY</p>
-                    <p class="font-light text-base text-mintGreen mb-4">
-                        No recent searches
-                    </p>
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-semibold text-mintGreen">HISTORY</p>
+                        <button 
+                            class="text-sm text-mintGreen hover:text-white"
+                            on:click={clearHistory}
+                        >
+                            Clear All
+                        </button>
+                    </div>
+                    
+                    {#if searchHistory.length === 0}
+                        <p class="font-light text-base text-mintGreen mb-4">
+                            No recent searches
+                        </p>
+                    {:else}
+                        <div class="space-y-2">
+                            {#each searchHistory as { query, timestamp }}
+                                <div class="flex justify-between items-center group">
+                                    <button 
+                                        class="font-light text-mintGreen hover:text-white text-left flex-grow"
+                                        on:click={() => useHistoryItem(query)}
+                                    >
+                                        {query}
+                                    </button>
+                                    <button 
+                                        class="text-mintGreen hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                        on:click={() => removeFromHistory(query)}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            {/each}
+                        </div>
+                    {/if}
                 </div>
 
                 <div class="mb-2">
                     <p class="font-semibold text-mintGreen">SEARCH OPTIONS</p>
                     <div class="flex justify-between mt-2">
-                        <p class="font-light text-mintGreen w-1/2"><span class="font-semibold text-white">from:</span> user</p>
-                        <p class="font-light text-mintGreen w-1/2"><span class="font-semibold text-white">has:</span> link / image / video</p>
+                        <p class="font-light text-mintGreen w-1/2">
+                            <span class="font-semibold text-white">from:</span> user
+                        </p>
+                        <p class="font-light text-mintGreen w-1/2">
+                            <span class="font-semibold text-white">has:</span> link / image / video
+                        </p>
                     </div>
                 </div>
             </div>
