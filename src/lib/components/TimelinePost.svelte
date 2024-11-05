@@ -13,6 +13,7 @@
     export let createdAt: Date | undefined = undefined;
     export let searchTerm = "";
     export let postUrl = "";
+    export let mediaAttachments: Array<any> = [];
 
     const dateFormatOptions = {
         year: "numeric",
@@ -82,6 +83,11 @@
                     <p class="content text-white">{@html highlightContent(content, searchTerm)}</p>
                 </article>
               </a>
+            {#if mediaAttachments !== undefined && Array.from(mediaAttachments).length > 0}
+            <div class="flex justify-stretch w-full">
+                <img style="width:100%" src={mediaAttachments[0]['preview_url']} alt="">
+            </div>
+            {/if}
             <div class="flex flex-row justify-between text-mintGreen">
                 <!-- Post statistics -->
                 <span class="flex flex-row items-center gap-1">

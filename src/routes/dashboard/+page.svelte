@@ -22,6 +22,13 @@
         
                 // Construct the Bluesky web URL
                 const postUrl = `https://bsky.app/profile/${post['author']['handle']}/post/${postId}`;
+                const mediaAttachments = post['embed'] !== undefined && post['embed']['images'] !== undefined
+                                        ? Array.from(post['embed']['images']).map((p: any) => {
+                                            return {
+                                                preview_url: p['thumb']
+                                            }
+                                        })
+                                        : []
                 all_posts.push({
                     host : "bluesky",
                     profilePicture : post['author']['avatar'],
@@ -32,7 +39,8 @@
                     shareCount : post['repostCount'],
                     starCount : post['likeCount'],
                     postUrl: postUrl,
-                    createdAt : new Date(post['record']['createdAt'])
+                    createdAt : new Date(post['record']['createdAt']),
+                    mediaAttachments : mediaAttachments
                 })
             }
         }
@@ -49,7 +57,8 @@
                     shareCount : post['reblogs_count'],
                     starCount : post['favourites_count'],
                     postUrl: post['url'],
-                    createdAt : new Date(post['created_at'])
+                    createdAt : new Date(post['created_at']),
+                    mediaAttachments : post['media_attachments']
                 })
             }
         }
