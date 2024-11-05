@@ -3,6 +3,7 @@
     import { mastodon_posts, bluesky_posts } from '$lib/stores'
     import { goto } from '$app/navigation';
     import { sessionStore } from '$lib/store/session';
+  import { onMount } from 'svelte';
 
     let all_posts: any[] = [];
     let searchQuery = '';
@@ -12,6 +13,11 @@
 
         if($sessionStore.accounts.bluesky) {
             for(let post of $bluesky_posts) {
+                // console.log(post)
+                const postId = post['uri'].split('/').pop();
+        
+                // Construct the Bluesky web URL
+                const postUrl = `https://bsky.app/profile/${post['author']['handle']}/post/${postId}`;
                 all_posts.push({
                     host : "bluesky",
                     profilePicture : post['author']['avatar'],
@@ -21,7 +27,7 @@
                     commentCount : post['replyCount'],
                     shareCount : post['repostCount'],
                     starCount : post['likeCount'],
-                    postUrl: post['url'],
+                    postUrl: postUrl,
                     createdAt : new Date(post['record']['createdAt'])
                 })
             }

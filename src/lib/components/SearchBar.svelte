@@ -3,15 +3,17 @@
     import { mastodon_posts, bluesky_posts } from '$lib/stores';
     import { sessionStore } from '$lib/store/session';
     import { getAtpAgent } from '$lib/bsky';
-    
+
     const agent = getAtpAgent(sessionStore);
     if($sessionStore.accounts.bluesky) {
         agent.resumeSession($sessionStore.accounts.bluesky.credentials);
     }
 
     export let searchQuery = '';
-    async function search(event){
-        event.preventDefault();
+    async function search(event?: Event){
+        if (event) {
+            event.preventDefault();
+        }
 
         // Limit search query based on post character limit of 300
         if (searchQuery.length > 300) {

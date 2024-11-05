@@ -15,10 +15,6 @@
     let errorMessage: string | undefined;
 
     async function getMastodonToken() {
-        // if(token == "") {
-        //     errorMessage = "Enter a token";
-        //     return;
-        // }
 
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
@@ -53,8 +49,6 @@
     }
 
     function getMastodonCode() {
-        event?.preventDefault();
-
         let clientID = env.PUBLIC_CLIENT_ID;
         let redirectURI = env.PUBLIC_REDIRECT_URI;
         let href = "https://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
