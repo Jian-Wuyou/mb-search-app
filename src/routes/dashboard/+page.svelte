@@ -12,10 +12,6 @@
     let all_posts: any[] = [];
     let searchQuery = '';
     onMount(() => {
-        if (!$sessionStore.accounts.bluesky || !$sessionStore.accounts.mastodon) {
-            goto('/login');
-        }
-
         function closeImageModal(e: MouseEvent) {
             if (e.target === null || (e.target as any).contains(imageDialogRef)) return;
             if (imageDialogRef !== null) {
@@ -31,6 +27,13 @@
 
         document.addEventListener('click', closeImageModal)
     })
+
+    $: {
+        console.log($sessionStore.accounts)
+        if ($sessionStore.accounts.bluesky == null && $sessionStore.accounts.mastodon == null) {
+            goto('/login');
+        }
+    }
 
     function handleOpenImage(url: string) {
         if (imageDialogRef !== null) {

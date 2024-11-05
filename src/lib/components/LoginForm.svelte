@@ -28,7 +28,7 @@
             if(response.ok){
                 const authToken = await response.json();
                 console.log(JSON.stringify(authToken));
-                sessionStore.add_mastodon({
+                await sessionStore.add_mastodon({
                     access_token: authToken['access_token'],
                     token_type: authToken['token_type'],
                     scope: authToken['scope'],
