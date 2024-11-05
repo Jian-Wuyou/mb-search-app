@@ -36,6 +36,7 @@
 
             if(response.ok){
                 let post = await response.json();
+                // console.log(post['statuses']);
                 mastodon_posts.set(post['statuses']);
             }
         }
@@ -58,6 +59,7 @@
 
             if(response.ok) {
                 let post = await response.json();
+                // console.log(post['posts']);
                 bluesky_posts.set(post['posts']);
             }
         }
