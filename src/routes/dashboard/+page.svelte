@@ -29,7 +29,6 @@
     })
 
     $: {
-        console.log($sessionStore.accounts)
         if ($sessionStore.accounts.bluesky == null && $sessionStore.accounts.mastodon == null) {
             goto('/login');
         }
