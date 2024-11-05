@@ -15,10 +15,10 @@
     let errorMessage: string | undefined;
 
     async function getMastodonToken() {
-        if(!token) {
-            errorMessage = "Enter a token";
-            return;
-        }
+        // if(token == "") {
+        //     errorMessage = "Enter a token";
+        //     return;
+        // }
 
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
@@ -43,12 +43,18 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {
-            errorMessage = "Wrong token, please try again";
+            if (!token) {
+                errorMessage = "Empty token, please click Get Code!";
+            } else {
+                errorMessage = "Wrong token, please try again";
+            }
             console.error("Error obtaining token:", error);
         }
     }
 
     function getMastodonCode() {
+        event?.preventDefault();
+
         let clientID = env.PUBLIC_CLIENT_ID;
         let redirectURI = env.PUBLIC_REDIRECT_URI;
         let href = "https://mastodon.social/oauth/authorize?client_id="+clientID+"&scope=read&redirect_uri="+redirectURI+"&response_type=code";
@@ -212,6 +218,7 @@
         <div class="flex justify-end gap-4 mt-8">
             {#if selectedHost === "mastodon"}
                 <button
+                    type="button"
                     class="text-nowrap connect text-white font-bold rounded-lg transition duration-300 ease-in-out"
                     class:bg-mastodon={true}
                     class:hover:bg-[#4CA2FE]={selectedHost !== "mastodon"}
