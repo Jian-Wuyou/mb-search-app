@@ -8,7 +8,7 @@
     let all_posts: any[] = [];
     let searchQuery = '';
     onMount(() => {
-        if (!$sessionStore.accounts.bluesky && !$sessionStore.accounts.mastodon) {
+        if (!$sessionStore.accounts.bluesky || !$sessionStore.accounts.mastodon) {
             goto('/login');
         }
     })
