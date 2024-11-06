@@ -14,39 +14,124 @@
     let searchHistory: Array<{ query: string; timestamp: string }> = [];
     const MAX_HISTORY_ITEMS = 5;
 
-    onMount(() => {
-        const savedHistory = localStorage.getItem('searchHistory');
-        if (savedHistory) {
-            searchHistory = JSON.parse(savedHistory);
-        }
-    });
-
-    function addToHistory(query: string) {
-        
-        if (!query.trim()) return;
-        
-        searchHistory = searchHistory.filter(item => item.query !== query);
-        
-        searchHistory = [{
-            query,
-            timestamp: new Date().toISOString()
-        }, ...searchHistory];
-        
-        if (searchHistory.length > MAX_HISTORY_ITEMS) {
-            searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS);
-        }
-        
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    // Add new state for parsed filters
+    interface SearchFilters {
+        from?: string;
+        hasLink?: boolean;
+        hasImage?: boolean;
+        hasVideo?: boolean;
+        baseQuery?: string;
     }
 
-    function removeFromHistory(query: string) {
-        searchHistory = searchHistory.filter(item => item.query !== query);
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    function parseSearchQuery(query: string): SearchFilters {
+        const filters: SearchFilters = {};
+        const parts = query.split(' ');
+        const queryParts: string[] = [];
+
+        parts.forEach(part => {
+            if (part.startsWith('from:')) {
+                filters.from = part.slice(5);
+            } else if (part === 'has:link') {
+                filters.hasLink = true;
+            } else if (part === 'has:image') {
+                filters.hasImage = true;
+            } else if (part === 'has:video') {
+                filters.hasVideo = true;
+            } else {
+                queryParts.push(part);
+            }
+        });
+
+        filters.baseQuery = queryParts.join(' ');
+        return filters;
     }
 
-    function clearHistory() {
-        searchHistory = [];
-        localStorage.setItem('searchHistory', JSON.stringify([]));
+    async function searchMastodon(filters: SearchFilters) {
+        const searchParams = new URLSearchParams();
+        
+        // Base query
+        if (filters.baseQuery) {
+            searchParams.append('q', filters.baseQuery);
+        }
+        
+        // User filter
+        if (filters.from) {
+            searchParams.append('account_id', filters.from);
+        }
+        
+        // Media filters
+        if (filters.hasImage || filters.hasVideo) {
+            searchParams.append('only_media', 'true');
+        }
+        
+        searchParams.append('type', 'statuses');
+        searchParams.append('limit', '20');
+
+        const href = `https://mastodon.social/api/v2/search?${searchParams.toString()}`;
+        const response = await fetch(href, {
+            headers: {
+                'Authorization': `Bearer ${$sessionStore.accounts.mastodon.credentials.access_token}`
+            }
+        });
+
+        if(response.ok){
+            let post = await response.json();
+            let filteredPosts = post['statuses'];
+
+            // Additional filtering for specific media types and links
+            if (filters.hasLink || filters.hasImage || filters.hasVideo) {
+                filteredPosts = filteredPosts.filter(post => {
+                    if (filters.hasLink && !post.card) return false;
+                    if (filters.hasImage && !post.media_attachments.some(media => media.type === 'image')) return false;
+                    if (filters.hasVideo && !post.media_attachments.some(media => media.type === 'video')) return false;
+                    return true;
+                });
+            }
+
+            mastodon_posts.set(filteredPosts);
+        }
+    }
+
+    async function searchBluesky(filters: SearchFilters) {
+        const searchParams = new URLSearchParams();
+        
+        // Combine base query with user filter for Bluesky
+        let queryString = filters.baseQuery || '';
+        if (filters.from) {
+            queryString = `${queryString} from:${filters.from}`.trim();
+        }
+        
+        searchParams.append('q', queryString);
+        searchParams.append('limit', '20');
+        
+        const pdsUrl = agent.pdsUrl;
+        const href = `${pdsUrl}xrpc/app.bsky.feed.searchPosts?${searchParams.toString()}`;
+        
+        const response = await fetch(href, {
+            headers: {
+                Authorization: `Bearer ${$sessionStore.accounts.bluesky.credentials.accessJwt}`
+            }
+        });
+
+        if(response.ok) {
+            let post = await response.json();
+            let filteredPosts = post['posts'];
+
+            // Filter for media and links
+            if (filters.hasLink || filters.hasImage || filters.hasVideo) {
+                filteredPosts = filteredPosts.filter(post => {
+                    const embed = post.embed;
+                    
+                    if (filters.hasLink && !embed?.external) return false;
+                    if (filters.hasImage && !embed?.images?.length) return false;
+                    if (filters.hasVideo && !embed?.media?.videos?.length) return false;
+                    
+                    return true;
+                });
+            }
+
+            bluesky_posts.set(filteredPosts);
+        }
     }
 
     async function search(event?: Event) {
@@ -60,47 +145,46 @@
 
         addToHistory(searchQuery);
 
+        const filters = parseSearchQuery(searchQuery);
+
         if($sessionStore.accounts.mastodon) {
-            const searchParams = new URLSearchParams({
-                q: searchQuery,
-                limit: '20',
-                type: 'statuses'
-            });
-
-            const href = `https://mastodon.social/api/v2/search?${searchParams.toString()}`;
-            const response = await fetch(href, {
-                headers: {
-                    'Authorization': `Bearer ${$sessionStore.accounts.mastodon.credentials.access_token}`
-                }
-            });
-
-            if(response.ok){
-                let post = await response.json();
-                mastodon_posts.set(post['statuses']);
-            }
+            await searchMastodon(filters);
         }
 
         if($sessionStore.accounts.bluesky) {
-            const searchParams = new URLSearchParams({
-                q: searchQuery,
-                limit: '20'
-            });
-            
-            const pdsUrl = agent.pdsUrl;
-            const href = `${pdsUrl}xrpc/app.bsky.feed.searchPosts?${searchParams.toString()}`
-            const response = await fetch(
-                href, {
-                    headers: {
-                        Authorization: `Bearer ${$sessionStore.accounts.bluesky.credentials.accessJwt}`
-                    }
-                }
-            );
-
-            if(response.ok) {
-                let post = await response.json();
-                bluesky_posts.set(post['posts']);
-            }
+            await searchBluesky(filters);
         }
+    }
+
+    // Rest of the component remains the same
+    onMount(() => {
+        const savedHistory = localStorage.getItem('searchHistory');
+        if (savedHistory) {
+            searchHistory = JSON.parse(savedHistory);
+        }
+    });
+
+    function addToHistory(query: string) {
+        if (!query.trim()) return;
+        searchHistory = searchHistory.filter(item => item.query !== query);
+        searchHistory = [{
+            query,
+            timestamp: new Date().toISOString()
+        }, ...searchHistory];
+        if (searchHistory.length > MAX_HISTORY_ITEMS) {
+            searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS);
+        }
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }
+
+    function removeFromHistory(query: string) {
+        searchHistory = searchHistory.filter(item => item.query !== query);
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    }
+
+    function clearHistory() {
+        searchHistory = [];
+        localStorage.setItem('searchHistory', JSON.stringify([]));
     }
 
     let isExpanded = false;
@@ -121,6 +205,7 @@
     }
 </script>
 
+<!-- Template remains the same -->
 <div class="relative w-full">
     <div class="search-bar">
         <div class="icon absolute left-3.5 top-1/2 transform -translate-y-1/2">
