@@ -1,13 +1,15 @@
 <script>
     import { sessionStore } from "$lib/store/session";
     import { mastodon_posts, bluesky_posts } from "$lib/stores";
+    import FaEye from "svelte-icons/fa/FaEye.svelte";
+    import FaEyeSlash from 'svelte-icons/fa/FaEyeSlash.svelte'
+    import FaTrashAlt from 'svelte-icons/fa/FaTrashAlt.svelte'
     export let enable_mastodon = true;
     export let enable_bluesky = true;
 
     async function logout_mastodon() {
         await sessionStore.remove_mastodon();
         mastodon_posts.set([]);
-        
     }
 
     async function logout_bluesky() {
@@ -15,8 +17,7 @@
         bluesky_posts.set([]);
     }
 
-    $: console.log($sessionStore.accounts)
-
+    $: console.log($sessionStore.accounts);
 </script>
 
 <div class="side-bar">
@@ -28,56 +29,80 @@
         <button
             type="button"
             on:click={() => (enable_mastodon = !enable_mastodon)}
-            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row items-center gap-3"
+            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
         >
-            <div class="h-10 w-10 mr-2">
-                <i
-                    class="fa-brands fa-mastodon text-[#6364FF] text-4xl m-1 {enable_mastodon
-                        ? 'opacity-100'
-                        : 'opacity-40'}"
-                ></i>
-            </div>
-            <div class="text-left w-full">
-                <div class={enable_mastodon ? "opacity-70" : "opacity-40"}>
-                    {$sessionStore.accounts.mastodon.username || "no username"}
+            <div class="flex flex-row items-center gap-3">
+                <div class="h-10 w-10 mr-2">
+                    <i
+                        class="fa-brands fa-mastodon text-[#6364FF] text-4xl m-1 {enable_mastodon
+                            ? 'opacity-100'
+                            : 'opacity-40'}"
+                    ></i>
                 </div>
-                <div class={enable_mastodon ? "opacity-100" : "opacity-40"}>
-                    @{$sessionStore.accounts.mastodon.handle}
+                <div class="text-left w-full break-all w-[20ch]">
+                    <div class={enable_mastodon ? "opacity-70" : "opacity-40"}>
+                        { $sessionStore.accounts.mastodon.username || "no username"}
+                    </div>
+                    <div class={enable_mastodon ? "opacity-100" : "opacity-40"}>
+                        @{ $sessionStore.accounts.mastodon.handle}
+                    </div>
                 </div>
             </div>
-            <button
-                type="button"
-                class="ml-auto"
-                on:click={logout_mastodon}>X</button
-            >
+            <div class="flex flex-row items-center gap-3">
+                {#if enable_mastodon}
+                    <button class="hide flex justify-center items-center">
+                        <FaEye />
+                    </button>
+                {/if}
+                {#if !enable_mastodon}
+                    <button class="unhide flex justify-center items-center">
+                        <FaEyeSlash />
+                    </button>
+                {/if}
+                <button type="button" class="logout flex justify-center items-center" on:click={logout_mastodon}
+                    ><FaTrashAlt /></button
+                >
+            </div>
         </button>
     {/if}
     {#if $sessionStore.accounts.bluesky}
         <button
             type="button"
             on:click={() => (enable_bluesky = !enable_bluesky)}
-            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row items-center gap-3"
+            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
         >
-            <div class="h-10 w-10 mr-2">
-                <i
-                    class="fa-brands fa-bluesky text-[#1185FE] text-4xl m-1 {enable_bluesky
-                        ? 'opacity-100'
-                        : 'opacity-40'}"
-                ></i>
-            </div>
-            <div class="text-left w-full">
-                <div class={enable_bluesky ? "opacity-70" : "opacity-40"}>
-                    {$sessionStore.accounts.bluesky.username || "no username"}
+            <div class="flex flex-row items-center gap-3">
+                <div class="h-10 w-10 mr-2">
+                    <i
+                        class="fa-brands fa-bluesky text-[#1185FE] text-4xl m-1 {enable_bluesky
+                            ? 'opacity-100'
+                            : 'opacity-40'}"
+                    ></i>
                 </div>
-                <div class={enable_bluesky ? "opacity-100" : "opacity-40"}>
-                    @{$sessionStore.accounts.bluesky.handle}
+                <div class="text-left w-full break-all w-[20ch]">
+                    <div class={enable_bluesky ? "opacity-70" : "opacity-40"}>
+                        { $sessionStore.accounts.bluesky.username || "no username"}
+                    </div>
+                    <div class={enable_bluesky ? "opacity-100" : "opacity-40"}>
+                        @{$sessionStore.accounts.bluesky.handle}
+                    </div>
                 </div>
             </div>
-            <button
-                type="button"
-                class="ml-auto"
-                on:click={logout_bluesky}>X</button
-            >
+            <div class="flex flex-row items-center gap-3">
+                {#if enable_bluesky}
+                    <button class="hide flex justify-center items-center">
+                        <FaEye />
+                    </button>
+                {/if}
+                {#if !enable_bluesky}
+                    <button class="unhide flex justify-center items-center">
+                        <FaEyeSlash />
+                    </button>
+                {/if}
+                <button type="button" class="logout flex justify-center items-center" on:click={logout_bluesky}
+                    ><FaTrashAlt /></button
+                >
+            </div>
         </button>
     {/if}
 </div>
@@ -88,7 +113,7 @@
         top: 0;
         right: 0;
         height: 100vh;
-        width: 300px;
+        max-width: 30ch;
         padding: 1em;
         background-color: #162721;
     }
@@ -98,5 +123,25 @@
         font-weight: bold;
         font-size: 2em;
         margin-bottom: 0.5em;
+    }
+
+    .hide {
+        color: rgba(235, 235, 228, 0.90);
+        height: 24px;
+        width: 24px;
+        margin-left: 16px;
+    }
+
+    .unhide {
+        color: rgba(235, 235, 228, 0.4);
+        height: 24px;
+        width: 24px;
+        margin-left: 16px;
+    }
+
+    .logout {
+        color: #82202c;
+        height: 24px;
+        width: 24px;
     }
 </style>

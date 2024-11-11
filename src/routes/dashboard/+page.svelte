@@ -152,7 +152,7 @@
     </div>
 </dialog>
 
-<div class="flex justify-center h-screen overflow-auto">
+<div class="flex justify-center h-screen overflow-auto overflow-y-scroll">
     <div class="timeline-container border-x border-slateGreen">
         <div
             class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen"
