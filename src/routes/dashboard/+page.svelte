@@ -28,11 +28,11 @@
         document.addEventListener('click', closeImageModal)
     })
 
-    $: {
-        if ($sessionStore.accounts.bluesky == null && $sessionStore.accounts.mastodon == null) {
-            goto('/login');
-        }
-    }
+    // $: {
+    //     if ($sessionStore.accounts.bluesky == null && $sessionStore.accounts.mastodon == null) {
+    //         goto('/login');
+    //     }
+    // }
 
     function handleOpenImage(url: string) {
         if (imageDialogRef !== null) {

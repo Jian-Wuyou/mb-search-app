@@ -3,12 +3,15 @@
     import { sessionStore } from '$lib/store/session';
     import { goto } from '$app/navigation';
 
-    // if logged in, redirect
-    if($sessionStore.accounts.bluesky || $sessionStore.accounts.mastodon) {
-        goto("/dashboard");
-    } else {
-        goto("/login");
-    }
+    // TODO: Go to access (login) page first
+    goto("/dashboard");
+
+    // // if logged in, redirect
+    // if($sessionStore.accounts.bluesky || $sessionStore.accounts.mastodon) {
+    //     goto("/dashboard");
+    // } else {
+    //     goto("/login");
+    // }
 </script>
 
 <div class="flex items-center justify-center h-screen">

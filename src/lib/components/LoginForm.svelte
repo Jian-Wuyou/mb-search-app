@@ -6,6 +6,9 @@
     import { env } from '$env/dynamic/public';
     import { getAtpAgent } from '$lib/bsky';
     
+    export let successStatus = false;
+    export let successHost = "";
+
     let selectedHost = "mastodon";
     let username = "";
     let password = "";
@@ -15,7 +18,6 @@
     let errorMessage: string | undefined;
 
     async function getMastodonToken() {
-
         const clientID = env.PUBLIC_CLIENT_ID;
         const redirectURI = env.PUBLIC_REDIRECT_URI;
         const clientSecret = env.PUBLIC_CLIENT_SECRET;
@@ -34,7 +36,8 @@
                     scope: authToken['scope'],
                     created_at: authToken['created_at']
                 });
-                goto('/dashboard');
+                successStatus = true;
+                successHost = "mastodon";
             } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -84,8 +87,8 @@
         }
 
         console.log(JSON.stringify(resp));
-
-        goto("/dashboard");
+        successStatus = true;
+        successHost = "bluesky";
     }
 
     function switchHost(host: string) {
@@ -97,6 +100,8 @@
     }
 
     function Login() {
+        successStatus = false;
+        successHost = "";
         if (selectedHost === "mastodon") {
             getMastodonToken();
         } else {

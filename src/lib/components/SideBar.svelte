@@ -1,6 +1,7 @@
 <script>
     import { sessionStore } from "$lib/store/session";
     import { mastodon_posts, bluesky_posts } from "$lib/stores";
+    import { LoginForm } from '$lib/components';
     import FaEye from "svelte-icons/fa/FaEye.svelte";
     import FaEyeSlash from 'svelte-icons/fa/FaEyeSlash.svelte'
     import FaTrashAlt from 'svelte-icons/fa/FaTrashAlt.svelte'
@@ -17,13 +18,36 @@
         bluesky_posts.set([]);
     }
 
+    let connectModal;
+    function closeModalWhenClickedOutside(modal, event)
+    {
+        let dimensions = modal.getBoundingClientRect()
+        if (
+            (event.clientX < dimensions.left || event.clientX > dimensions.right) ||
+            (event.clientY < dimensions.top || event.clientY > dimensions.bottom)
+        ) {
+            modal.close();
+        }
+    }
+
+    let connectSuccess;
+    let connectHost;
+    $: {
+        if (connectSuccess) 
+        {
+            connectModal.close();
+            if (connectHost == "mastodon") enable_mastodon = true;
+            if (connectHost == "bluesky") enable_bluesky = true;
+        }
+    }
+
     $: console.log($sessionStore.accounts);
 </script>
 
 <div class="side-bar">
     <h1 class="title-text">SearchApp</h1>
     <h1 style="color: #98CDC4">
-        <strong>Connected Feeds <a href="/login">+</a></strong>
+        <strong>Connected Feeds</strong>
     </h1>
     {#if $sessionStore.accounts.mastodon}
         <button
@@ -105,6 +129,19 @@
             </div>
         </button>
     {/if}
+    <button 
+        on:click={() => connectModal.showModal()}
+        class="rounded-full w-full mt-4 bg-mintGreen text-blackGreen"
+    >
+        <strong>Connect</strong>
+    </button>
+
+    <dialog bind:this={connectModal}
+        on:click={(e) => closeModalWhenClickedOutside(connectModal, e)}
+        class="p-8 rounded-lg bg-blackGreen border border-slateGreen"    
+    >
+        <LoginForm bind:successStatus={connectSuccess} bind:successHost={connectHost}/>
+    </dialog>
 </div>
 
 <style>
@@ -113,7 +150,7 @@
         top: 0;
         right: 0;
         height: 100vh;
-        max-width: 30ch;
+        width: 30ch;
         padding: 1em;
         background-color: #162721;
     }
@@ -143,5 +180,10 @@
         color: #82202c;
         height: 24px;
         width: 24px;
+    }
+
+    dialog::backdrop {
+        background-color: black;
+        opacity: 0.25;
     }
 </style>
