@@ -6,6 +6,8 @@
     import { sessionStore } from '$lib/store/session';
     import { onMount } from 'svelte';
 
+    let searchBarObject;
+
     let imageDialogRef: HTMLDialogElement|null = null;
     let imageDialogURL = "";
 
@@ -157,7 +159,7 @@
         <div
             class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen"
         >
-            <SearchBar bind:searchQuery />
+            <SearchBar bind:this={searchBarObject} bind:searchQuery />
         </div>
         {#each all_posts as post}
             {#if (post.host == "bluesky" && enable_bluesky) || (post.host == "mastodon" && enable_mastodon)}
@@ -166,7 +168,7 @@
         {/each}
     </div>
 
-    <SideBar on:connect={() => {invalidateAll();}} bind:enable_bluesky bind:enable_mastodon />
+    <SideBar on:connect={() => {searchBarObject.refreshAgent();}} bind:enable_bluesky bind:enable_mastodon />
 </div>
 
 <style>

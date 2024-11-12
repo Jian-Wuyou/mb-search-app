@@ -88,6 +88,9 @@
         }
 
         console.log(JSON.stringify(resp));
+        dispatch("success", {
+            host: "bluesky"
+        })
     }
 
     function switchHost(host: string) {

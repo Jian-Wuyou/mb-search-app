@@ -6,8 +6,13 @@
     import { getAtpAgent } from '$lib/bsky';
 
     const agent = getAtpAgent(sessionStore);
-    if($sessionStore.accounts.bluesky) {
-        agent.resumeSession($sessionStore.accounts.bluesky.credentials);
+    refreshAgent();
+
+    export function refreshAgent()
+    {
+        if($sessionStore.accounts.bluesky) {
+            agent.resumeSession($sessionStore.accounts.bluesky.credentials);
+        }
     }
 
     export let searchQuery = '';
