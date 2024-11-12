@@ -187,6 +187,7 @@
         if (event) {
             event.preventDefault();
         }
+        isExpanded = false;         // Closes SearchBar when a search is made
 
         if (searchQuery.length > 300) {
             searchQuery = searchQuery.slice(0, 300);

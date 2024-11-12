@@ -6,6 +6,7 @@
     import { sessionStore } from '$lib/store/session';
     import { onMount } from 'svelte';
 
+    let timelineObject;
     let searchBarObject;
 
     let imageDialogRef: HTMLDialogElement|null = null;
@@ -132,6 +133,13 @@
         }
 
         all_posts.sort((a,b)=> b.createdAt - a.createdAt);
+
+        // Scrolls timeline to top
+        if (typeof timelineObject !== "undefined")
+        {
+            timelineObject.scroll(0, 0);
+        }
+
         // console.log(all_posts);
     }
     let enable_bluesky = true;
@@ -154,7 +162,9 @@
     </div>
 </dialog>
 
-<div class="flex justify-center h-screen overflow-auto overflow-y-scroll">
+<div bind:this={timelineObject}
+    class="flex justify-center h-screen overflow-auto overflow-y-scroll"
+>
     <div class="timeline-container border-x border-slateGreen">
         <div
             class="search-container sticky top-0 flex items-center p-8 border-b border-slateGreen bg-blackGreen"
