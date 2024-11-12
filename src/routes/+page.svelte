@@ -3,7 +3,7 @@
     import { sessionStore } from '$lib/store/session';
     import { goto } from '$app/navigation';
 
-    // TODO: Go to access (login) page first
+    // TODO: Go to access (login) page if not logged in
     goto("/dashboard");
 
     // // if logged in, redirect

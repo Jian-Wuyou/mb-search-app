@@ -2,11 +2,14 @@
     import { sessionStore } from "$lib/store/session";
     import { mastodon_posts, bluesky_posts } from "$lib/stores";
     import { LoginForm } from '$lib/components';
+    import { createEventDispatcher } from "svelte";
     import FaEye from "svelte-icons/fa/FaEye.svelte";
     import FaEyeSlash from 'svelte-icons/fa/FaEyeSlash.svelte'
     import FaTrashAlt from 'svelte-icons/fa/FaTrashAlt.svelte'
     export let enable_mastodon = true;
     export let enable_bluesky = true;
+
+    const dispatch = createEventDispatcher();
 
     async function logout_mastodon() {
         await sessionStore.remove_mastodon();
@@ -30,15 +33,12 @@
         }
     }
 
-    let connectSuccess;
-    let connectHost;
-    $: {
-        if (connectSuccess) 
-        {
-            connectModal.close();
-            if (connectHost == "mastodon") enable_mastodon = true;
-            if (connectHost == "bluesky") enable_bluesky = true;
-        }
+    function connectSuccess(event)
+    {
+        connectModal.close();
+        if (event.detail.host == "mastodon") enable_mastodon = true;
+        if (event.detail.host == "bluesky") enable_bluesky = true;
+        dispatch("connect");
     }
 
     $: console.log($sessionStore.accounts);
@@ -140,7 +140,7 @@
         on:click={(e) => closeModalWhenClickedOutside(connectModal, e)}
         class="p-8 rounded-lg bg-blackGreen border border-slateGreen"    
     >
-        <LoginForm bind:successStatus={connectSuccess} bind:successHost={connectHost}/>
+        <LoginForm on:success={connectSuccess}/>
     </dialog>
 </div>
 

@@ -2,12 +2,11 @@
     import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
     import FaKey from "svelte-icons/fa/FaKey.svelte";
     import { sessionStore } from "$lib/store/session";
-    import { goto } from '$app/navigation';
+    import { createEventDispatcher } from "svelte";
     import { env } from '$env/dynamic/public';
     import { getAtpAgent } from '$lib/bsky';
     
-    export let successStatus = false;
-    export let successHost = "";
+    const dispatch = createEventDispatcher();
 
     let selectedHost = "mastodon";
     let username = "";
@@ -36,8 +35,10 @@
                     scope: authToken['scope'],
                     created_at: authToken['created_at']
                 });
-                successStatus = true;
-                successHost = "mastodon";
+                dispatch("success", {
+                    host: "mastodon"
+                })
+
             } else {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -87,8 +88,6 @@
         }
 
         console.log(JSON.stringify(resp));
-        successStatus = true;
-        successHost = "bluesky";
     }
 
     function switchHost(host: string) {
@@ -100,8 +99,6 @@
     }
 
     function Login() {
-        successStatus = false;
-        successHost = "";
         if (selectedHost === "mastodon") {
             getMastodonToken();
         } else {

@@ -2,7 +2,7 @@
     import FaWindowClose from 'svelte-icons/fa/FaWindowClose.svelte'
     import { SearchBar, SideBar, TimelinePost, Status } from '$lib/components';
     import { mastodon_posts, bluesky_posts } from '$lib/stores'
-    import { goto } from '$app/navigation';
+    import { goto, invalidateAll } from '$app/navigation';
     import { sessionStore } from '$lib/store/session';
     import { onMount } from 'svelte';
 
@@ -166,7 +166,7 @@
         {/each}
     </div>
 
-    <SideBar bind:enable_bluesky bind:enable_mastodon />
+    <SideBar on:connect={() => {invalidateAll();}} bind:enable_bluesky bind:enable_mastodon />
 </div>
 
 <style>
