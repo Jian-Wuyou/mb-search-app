@@ -1,25 +1,79 @@
 <script lang="ts">
     import type { ActionData } from './$types'
+    import FaUserAlt from "svelte-icons/fa/FaUserAlt.svelte";
+    import FaKey from "svelte-icons/fa/FaKey.svelte";
 
     export let form: ActionData
 </script>
 
-<h1>Register</h1>
+<div class="flex items-center justify-center h-screen"> 
+    <div class="flex flex-col items-center justify-center">
+        <div class="text-white font-bold text-6xl mb-32">
+            Register an account
+        </div>
 
-<form action="?/register" method="POST">
-    <div>
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text" required>
+        <form action="?/register" method="POST">
+            <div class="mb-4">
+                <div class="text-mintGreen font-bold">Sign up</div>
+
+                <div class="relative my-2">
+                    <div class="icon absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <FaUserAlt />
+                    </div>
+                    <input
+                        name="username"
+                        type="text"
+                        placeholder="Username"
+                        class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
+                    />
+                </div>
+
+                <div class="relative">
+                    <div class="icon absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <FaKey />
+                    </div>
+                    <input
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        class="login-field bg-forestGreen placeholder-mintGreen placeholder-opacity-50 text-mintGreen pl-10 px-2 rounded-lg hover:border border-mintGreen"
+                    />
+                </div>
+
+                <div class="flex justify-end gap-4 mt-8">
+                    <button
+                        type="submit"
+                        class="connect text-white font-bold px-4 rounded-lg transition duration-300 ease-in-out bg-[#86ada7] hover:bg-mintGreen hover:text-slateGreen"
+                    >
+                        Register
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <p class="text-[#86ada7]">
+            Already have an account?
+            <span class="hover:underline">
+                <strong><a href="/login">Sign in</a></strong>
+            </span>
+        </p>
     </div>
+</div>
 
-    <div>
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" required>
-    </div>
+<style>
+    .icon {
+        color: #98cdc4;
+        width: 20px;
+        height: 20px;
+    }
 
-    {#if form?.user}
-        <p class="error">Username is taken.</p>
-    {/if}
+    .login-field {
+        width: 672px;
+        height: 48px;
+    }
 
-    <button type="submit">Register</button>
-</form>
+    .connect {
+        width: 99px;
+        height: 48px;
+    }
+</style>
