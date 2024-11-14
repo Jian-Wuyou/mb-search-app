@@ -72,103 +72,105 @@
         </div>
     {/if}
 
-    <h1 style="color: #98CDC4" class="mt-2">
-        <strong>Connected Feeds</strong>
-    </h1>
-    {#if $sessionStore.accounts.mastodon}
-        <button
-            type="button"
-            on:click={() => (enable_mastodon = !enable_mastodon)}
-            class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
-        >
-            <div class="flex flex-row items-center gap-3">
-                <div class="h-10 w-10 mr-2">
-                    <i
-                        class="fa-brands fa-mastodon text-[#6364FF] text-4xl m-1 {enable_mastodon
-                            ? 'opacity-100'
-                            : 'opacity-40'}"
-                    ></i>
-                </div>
-                <div class="text-left w-full break-all w-[20ch]">
-                    <div class={enable_mastodon ? "opacity-70" : "opacity-40"}>
-                        { $sessionStore.accounts.mastodon.username || "no username"}
+    {#if !$page?.error}
+        <h1 style="color: #98CDC4" class="mt-2">
+            <strong>Connected Feeds</strong>
+        </h1>
+        {#if $sessionStore.accounts.mastodon}
+            <button
+                type="button"
+                on:click={() => (enable_mastodon = !enable_mastodon)}
+                class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
+            >
+                <div class="flex flex-row items-center gap-3">
+                    <div class="h-10 w-10 mr-2">
+                        <i
+                            class="fa-brands fa-mastodon text-[#6364FF] text-4xl m-1 {enable_mastodon
+                                ? 'opacity-100'
+                                : 'opacity-40'}"
+                        ></i>
                     </div>
-                    <div class={enable_mastodon ? "opacity-100" : "opacity-40"}>
-                        @{ $sessionStore.accounts.mastodon.handle}
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-row items-center gap-3">
-                {#if enable_mastodon}
-                    <button class="hide flex justify-center items-center">
-                        <FaEye />
-                    </button>
-                {/if}
-                {#if !enable_mastodon}
-                    <button class="unhide flex justify-center items-center">
-                        <FaEyeSlash />
-                    </button>
-                {/if}
-                <button type="button" class="logout flex justify-center items-center" on:click={logout_mastodon}
-                    ><FaTrashAlt /></button
-                >
-            </div>
-        </button>
-    {/if}
-    {#if $sessionStore.accounts.bluesky}
-        <button
-            type="button"
-            on:click={() => (enable_bluesky = !enable_bluesky)}
-            class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
-        >
-            <div class="flex flex-row items-center gap-3">
-                <div class="h-10 w-10 mr-2">
-                    <i
-                        class="fa-brands fa-bluesky text-[#1185FE] text-4xl m-1 {enable_bluesky
-                            ? 'opacity-100'
-                            : 'opacity-40'}"
-                    ></i>
-                </div>
-                <div class="text-left w-full break-all w-[20ch]">
-                    <div class={enable_bluesky ? "opacity-70" : "opacity-40"}>
-                        { $sessionStore.accounts.bluesky.username || "no username"}
-                    </div>
-                    <div class={enable_bluesky ? "opacity-100" : "opacity-40"}>
-                        @{$sessionStore.accounts.bluesky.handle}
+                    <div class="text-left w-full break-all w-[20ch]">
+                        <div class={enable_mastodon ? "opacity-70" : "opacity-40"}>
+                            { $sessionStore.accounts.mastodon.username || "no username"}
+                        </div>
+                        <div class={enable_mastodon ? "opacity-100" : "opacity-40"}>
+                            @{ $sessionStore.accounts.mastodon.handle}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-row items-center gap-3">
-                {#if enable_bluesky}
-                    <button class="hide flex justify-center items-center">
-                        <FaEye />
-                    </button>
-                {/if}
-                {#if !enable_bluesky}
-                    <button class="unhide flex justify-center items-center">
-                        <FaEyeSlash />
-                    </button>
-                {/if}
-                <button type="button" class="logout flex justify-center items-center" on:click={logout_bluesky}
-                    ><FaTrashAlt /></button
-                >
-            </div>
-        </button>
-    {/if}
+                <div class="flex flex-row items-center gap-3">
+                    {#if enable_mastodon}
+                        <button class="hide flex justify-center items-center">
+                            <FaEye />
+                        </button>
+                    {/if}
+                    {#if !enable_mastodon}
+                        <button class="unhide flex justify-center items-center">
+                            <FaEyeSlash />
+                        </button>
+                    {/if}
+                    <button type="button" class="logout flex justify-center items-center" on:click={logout_mastodon}
+                        ><FaTrashAlt /></button
+                    >
+                </div>
+            </button>
+        {/if}
+        {#if $sessionStore.accounts.bluesky}
+            <button
+                type="button"
+                on:click={() => (enable_bluesky = !enable_bluesky)}
+                class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
+            >
+                <div class="flex flex-row items-center gap-3">
+                    <div class="h-10 w-10 mr-2">
+                        <i
+                            class="fa-brands fa-bluesky text-[#1185FE] text-4xl m-1 {enable_bluesky
+                                ? 'opacity-100'
+                                : 'opacity-40'}"
+                        ></i>
+                    </div>
+                    <div class="text-left w-full break-all w-[20ch]">
+                        <div class={enable_bluesky ? "opacity-70" : "opacity-40"}>
+                            { $sessionStore.accounts.bluesky.username || "no username"}
+                        </div>
+                        <div class={enable_bluesky ? "opacity-100" : "opacity-40"}>
+                            @{$sessionStore.accounts.bluesky.handle}
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-row items-center gap-3">
+                    {#if enable_bluesky}
+                        <button class="hide flex justify-center items-center">
+                            <FaEye />
+                        </button>
+                    {/if}
+                    {#if !enable_bluesky}
+                        <button class="unhide flex justify-center items-center">
+                            <FaEyeSlash />
+                        </button>
+                    {/if}
+                    <button type="button" class="logout flex justify-center items-center" on:click={logout_bluesky}
+                        ><FaTrashAlt /></button
+                    >
+                </div>
+            </button>
+        {/if}
 
-    <button 
-        on:click={() => connectModal.showModal()}
-        class="rounded-full w-full mt-4 bg-mintGreen text-blackGreen"
-    >
-        <strong>Connect</strong>
-    </button>
+        <button 
+            on:click={() => connectModal.showModal()}
+            class="rounded-full w-full mt-4 bg-mintGreen text-blackGreen"
+        >
+            <strong>Connect</strong>
+        </button>
 
-    <dialog bind:this={connectModal}
-        on:click={(e) => closeModalWhenClickedOutside(connectModal, e)}
-        class="p-8 rounded-lg bg-blackGreen border border-slateGreen"    
-    >
-        <LoginForm on:success={connectSuccess}/>
-    </dialog>
+        <dialog bind:this={connectModal}
+            on:click={(e) => closeModalWhenClickedOutside(connectModal, e)}
+            class="p-8 rounded-lg bg-blackGreen border border-slateGreen"    
+        >
+            <LoginForm on:success={connectSuccess}/>
+        </dialog>
+    {/if}
 </div>
 
 <style>

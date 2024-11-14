@@ -190,7 +190,7 @@
 
     .timeline-container {
         min-height: 100vh;
-        max-width: 758px;
+        width: 758px;
         height: fit-content;
         border-left: 1px solid #2e524c;
         border-right: 1px solid #2e524c;
@@ -199,10 +199,9 @@
     .search-container {
         position: sticky;
         top: 0;
-        width: 758px;
+        width: 100%;
         height: 120px;
         padding: 2em;
         border-bottom: 1px solid #2e524c;
-        background-color: #162721;
     }
 </style>
