@@ -7,10 +7,10 @@ import { db } from '$lib/database'
 export const prerender = false;
 
 export const load: PageServerLoad = async ({ locals }) => {
-    // // Redirects user if already logged in
-    // if (locals.user) {
-    //     throw redirect(302, '/')
-    // }
+    // Redirects user if already logged in
+    if (locals.user) {
+        throw redirect(302, '/')
+    }
 }
 
 const login: Action = async ({cookies, request}) => {
