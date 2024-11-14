@@ -62,6 +62,7 @@
             </div>
             <form action="/logout" method="post">
                 <button 
+                    on:click={() => {logout_mastodon(); logout_bluesky();}}
                     type="submit"
                     class="p-1 text-mintGreen opacity-70 hover:underline"
                 >
