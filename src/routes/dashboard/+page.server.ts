@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Prevents access without account
@@ -9,6 +10,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 
     // Prevents access from non-admins
     if (locals.user.role !== 'ADMIN') {
-        throw redirect(302, '/error');
+        error(401, "Unauthorized Access")
     }
 }

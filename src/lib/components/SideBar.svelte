@@ -3,6 +3,7 @@
     import { mastodon_posts, bluesky_posts } from "$lib/stores";
     import { LoginForm } from '$lib/components';
     import { createEventDispatcher } from "svelte";
+    import { page } from '$app/stores'
     import FaEye from "svelte-icons/fa/FaEye.svelte";
     import FaEyeSlash from 'svelte-icons/fa/FaEyeSlash.svelte'
     import FaTrashAlt from 'svelte-icons/fa/FaTrashAlt.svelte'
@@ -46,14 +47,38 @@
 
 <div class="side-bar">
     <h1 class="title-text">SearchApp</h1>
-    <h1 style="color: #98CDC4">
+
+    {#if $page.data.user}
+        <div
+            class="w-full p-2 mt-2 text-[#98CDC4] flex flex-row justify-between items-center"
+        >
+            <div class="flex flex-row items-center gap-3">
+                <div class="h-10 w-10 mr-2">
+                    <i class="text-4xl m-1 fa-solid fa-circle-user"></i>
+                </div>
+                <div class="text-left w-full break-all w-[20ch]">
+                    <strong>{$page.data.user.name}</strong>
+                </div>
+            </div>
+            <form action="/logout" method="post">
+                <button 
+                    type="submit"
+                    class="p-1 text-mintGreen opacity-70 hover:underline"
+                >
+                    Logout
+                </button>
+            </form>
+        </div>
+    {/if}
+
+    <h1 style="color: #98CDC4" class="mt-2">
         <strong>Connected Feeds</strong>
     </h1>
     {#if $sessionStore.accounts.mastodon}
         <button
             type="button"
             on:click={() => (enable_mastodon = !enable_mastodon)}
-            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
+            class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
         >
             <div class="flex flex-row items-center gap-3">
                 <div class="h-10 w-10 mr-2">
@@ -93,7 +118,7 @@
         <button
             type="button"
             on:click={() => (enable_bluesky = !enable_bluesky)}
-            class="w-full mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
+            class="w-full p-2 mt-2 hover:bg-[#1D342F] text-[#98CDC4] flex flex-row justify-between items-center"
         >
             <div class="flex flex-row items-center gap-3">
                 <div class="h-10 w-10 mr-2">
@@ -129,6 +154,7 @@
             </div>
         </button>
     {/if}
+
     <button 
         on:click={() => connectModal.showModal()}
         class="rounded-full w-full mt-4 bg-mintGreen text-blackGreen"
