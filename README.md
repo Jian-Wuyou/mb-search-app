@@ -28,6 +28,13 @@ npm run dev
 ```
 From there, open the `localhost` link provided to use the Search App.
 
+## Setting up Database
+The application needs a database (either local/online) to function. The user can connect to their database through the following steps:
+1. In the prisma/schema.prisma file, update the database provider (i.e. sqlite, mysql, postgresql).
+2. In the user's .env file, update the DATABASE_URL (and DIRECT_URL, if necessary).
+3. run `npx prisma db push`.
+4. Inside the database's Roles Table, add a USER and ADMIN entry.
+
 ## Search App Login
 To access the dashboard, you must first login to the Search App's central account. Enter the credentials then click `Login`. Once authenticated, you will be brought to the blank dashboard. Click the `Connect` button on the sidebar to login to your Mastodon and Bluesky accounts and start searching.
 
