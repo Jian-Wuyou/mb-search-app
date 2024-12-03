@@ -338,11 +338,11 @@
                     </div>
                     
                     {#if searchHistory.length === 0}
-                        <p class="font-light text-base text-mintGreen mb-4">
+                        <p class="font-light text-base text-mintGreen -mb-4">
                             No recent searches
                         </p>
                     {:else}
-                        <div class="space-y-2">
+                        <div class="space-y-2 -mb-4">
                             {#each searchHistory as { query, timestamp }}
                                 <div class="flex justify-between items-center group">
                                     <button 
@@ -361,18 +361,6 @@
                             {/each}
                         </div>
                     {/if}
-                </div>
-
-                <div class="mb-2">
-                    <p class="font-semibold text-mintGreen">SEARCH OPTIONS</p>
-                    <div class="flex justify-between mt-2">
-                        <p class="font-light text-mintGreen w-1/2">
-                            <span class="font-semibold text-white">from:</span> user
-                        </p>
-                        <p class="font-light text-mintGreen w-1/2">
-                            <span class="font-semibold text-white">has:</span> link / image / video
-                        </p>
-                    </div>
                 </div>
             </div>
         {/if}
